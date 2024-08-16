@@ -1,0 +1,94 @@
+add_newline = false
+format = """\
+$hostname \
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$git_state\
+$c\
+$python\
+$docker_context\
+$fill\
+$time\
+$shell\
+\n$character
+"""
+
+[docker_context]
+symbol = '[U] '
+detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
+only_with_files = false
+style = '#3fa3ff bold'
+format = '[$symbol]($style)[$context](#e4e4e4)'
+
+[fill]
+symbol = ' '
+
+[shell]
+style = "fg:#e4e4e4 bg:#none"
+bash_indicator = '[ ](205)[bash]($style)'
+zsh_indicator = '[ ](205)[zsh]($style)'
+disabled = false
+format = ' [$indicator]($style)'
+
+[hostname]
+ssh_only = false
+disabled = false
+style = "#3fa3ff"
+format = "[ 󱨚]($style) [dhl](#e4e4e4)"
+
+[c]
+format = ' [$symbol $name:$version]($style)'
+
+[python]
+disabled = false
+pyenv_version_name = true
+detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini']
+symbol = ' '
+# format = ' [$symbol](22) [$version](#e4e4e4)[$virtualenv](22)'
+version_format = '${raw}'
+format = ' [${symbol}](bg:none fg:#af6fef)[${version}](#e4e4e4) [$virtualenv](134)'
+
+[directory]
+format = "[ ](214) [$path](43)"
+style = "fg:#E4E4E4 bg:#none"
+
+[git_branch]
+format = '[$symbol](blue)[$branch]($style)[(:$remote_branch)]($style)'
+symbol = " \ueba1 "
+style = "fg:#e4e4e4 bg:none"
+
+[git_status]
+style = "fg:#e4e4e4"
+conflicted = ' []($style) ${count}($style)'
+deleted = ' []($style) ${count}($style)'
+renamed = ' [󰕁]($style) ${count}($style)'
+modified = ' []($style) ${count}($style)'
+staged = ' [󱁺]($style) ${count}($style)'
+ahead = ' [󰶣]($style) ${count}($style)'
+behind = ' [󰶡]($style) ${count}($style)'
+format = '($conflicted$deleted$renamed$modified$staged$ahead$behind)'
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+cherry_pick = '[ ](bold red)'
+
+[git_metrics]
+added_style = "fg:41 bg:none"
+deleted_style = "fg:196 bg:none"
+format = " [+$added]($added_style) [-$deleted]($deleted_style)"
+disabled = false
+
+[cmd_duration]
+format = "[ 󱦟 $duration ]($style)"
+style = "fg:bright-white bg:none"
+
+[character]
+success_symbol = '[ 󰔰](48) '
+error_symbol = '[ ✗](#E84D44) '
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+format = '[  ](99)[$time](bg:none fg:#E4E4E4) '
