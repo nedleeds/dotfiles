@@ -3,4 +3,5 @@ pip/*
 kitty/*
 nvim_backup/*
 github-copilot/*
-tmux-*
+tmux-client-*
+tmux-server-*
