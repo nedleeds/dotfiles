@@ -31,7 +31,7 @@ style = "#3fa3ff"
 format = "[ 󱨚]($style) [dhl](#e4e4e4)"
 
 [directory]
-format = "[ ](214) [$path](43)"
+format = "[ ](214)[$path](43)"
 style = "fg:#E4E4E4 bg:#none"
 
 [git_branch]
