@@ -1,5 +1,6 @@
 add_newline = false
 format = """\
+$os\
 $hostname \
 $directory\
 $git_branch\
@@ -8,47 +9,26 @@ $git_metrics\
 $git_state\
 $c\
 $python\
-$docker_context\
 $fill\
+$conda\
+$docker_context\
+cmd_duration\
 $time\
 $shell\
 \n$character
 """
 
-[docker_context]
-symbol = '[U] '
-detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
-only_with_files = false
-style = '#3fa3ff bold'
-format = '[$symbol]($style)[$context](#e4e4e4)'
-
-[fill]
-symbol = ' '
-
-[shell]
-style = "fg:#e4e4e4 bg:#none"
-bash_indicator = '[ ](205)[bash]($style)'
-zsh_indicator = '[ ](205)[zsh]($style)'
+[os]
+symbols.Debian = ""
+symbols.Macos = ""
 disabled = false
-format = ' [$indicator]($style)'
+format = "[$symbol]($style)"
 
 [hostname]
 ssh_only = false
 disabled = false
 style = "#3fa3ff"
 format = "[ 󱨚]($style) [dhl](#e4e4e4)"
-
-[c]
-format = ' [$symbol $name:$version]($style)'
-
-[python]
-disabled = false
-pyenv_version_name = true
-detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini']
-symbol = ' '
-# format = ' [$symbol](22) [$version](#e4e4e4)[$virtualenv](22)'
-version_format = '${raw}'
-format = ' [${symbol}](bg:none fg:#af6fef)[${version}](#e4e4e4) [$virtualenv](134)'
 
 [directory]
 format = "[ ](214) [$path](43)"
@@ -70,25 +50,58 @@ ahead = ' [󰶣]($style) ${count}($style)'
 behind = ' [󰶡]($style) ${count}($style)'
 format = '($conflicted$deleted$renamed$modified$staged$ahead$behind)'
 
-[git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-cherry_pick = '[ ](bold red)'
-
 [git_metrics]
 added_style = "fg:41 bg:none"
 deleted_style = "fg:196 bg:none"
 format = " [+$added]($added_style) [-$deleted]($deleted_style)"
 disabled = false
 
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+cherry_pick = '[ ](bold red)'
+
+[c]
+format = ' [$symbol $name:$version]($style)'
+
+[python]
+disabled = false
+pyenv_version_name = true
+detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini']
+symbol = ' '
+# format = ' [$symbol](22) [$version](#e4e4e4)[$virtualenv](22)'
+version_format = '${raw}'
+format = ' [${symbol}](bg:none fg:#af6fef)[${version}](#e4e4e4) [$virtualenv](134)'
+
+[fill]
+symbol = ' '
+
+[conda]
+format = '[$symbol$environment](dimmed green) '
+
+[docker_context]
+symbol = '[U] '
+detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
+only_with_files = false
+style = '#3fa3ff bold'
+format = '[$symbol]($style)[$context](#e4e4e4)'
+
 [cmd_duration]
 format = "[ 󱦟 $duration ]($style)"
 style = "fg:bright-white bg:none"
-
-[character]
-success_symbol = '[ 󰔰](48) '
-error_symbol = '[ ✗](#E84D44) '
 
 [time]
 disabled = false
 time_format = "%R" # Hour:Minute Format
 format = '[  ](99)[$time](bg:none fg:#E4E4E4) '
+
+[shell]
+style = "fg:#e4e4e4 bg:#none"
+bash_indicator = '[ ](205)[bash]($style)'
+zsh_indicator = '[ ](205)[zsh]($style)'
+disabled = false
+format = ' [$indicator]($style)'
+
+[character]
+success_symbol = '[󰔰](48)'
+error_symbol = '[✗](#E84D44)'
+
