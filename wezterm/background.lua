@@ -10,5 +10,5 @@ return {
 	},
 	window_background_opacity = 0.3,
 	macos_window_background_blur = 40,
-	text_background_opacity = 0.6,
+	-- text_background_opacity = 0.6,
 }
