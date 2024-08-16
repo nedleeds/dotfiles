@@ -5,3 +5,4 @@ nvim_backup/*
 github-copilot/*
 tmux-client-*
 tmux-server-*
+!tmux/
