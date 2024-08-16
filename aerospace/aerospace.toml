@@ -120,7 +120,6 @@ alt-b = 'workspace B'
 alt-c = 'workspace C'
 alt-d = 'workspace D'
 alt-e = 'workspace E'
-alt-f = 'workspace F'
 alt-g = 'workspace G'
 alt-i = 'workspace I'
 alt-m = 'workspace M'
@@ -158,6 +157,7 @@ alt-shift-z = 'move-node-to-workspace Z'
 
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
+alt-f = 'fullscreen'
 alt-q = ['focus-monitor LG', 'move-mouse window-force-center']
 alt-w= ['focus-monitor SAMSUNG', 'move-mouse window-force-center']
 
