@@ -12,7 +12,7 @@ $python\
 $fill\
 $conda\
 $docker_context\
-cmd_duration\
+$cmd_duration\
 $time\
 $shell\
 \n$character
