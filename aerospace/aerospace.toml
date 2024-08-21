@@ -158,12 +158,16 @@ alt-shift-z = 'move-node-to-workspace Z'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-f = 'fullscreen'
-alt-q = ['focus-monitor LG', 'move-mouse window-force-center']
-alt-w= ['focus-monitor SAMSUNG', 'move-mouse window-force-center']
+# alt-q = ['focus-monitor LG', 'move-mouse window-force-center']
+# alt-w = ['focus-monitor SAMSUNG', 'move-mouse window-force-center']
+alt-q = ['focus-monitor main', 'move-mouse window-force-center']
+alt-w = ['focus-monitor secondary', 'move-mouse window-force-center']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
-alt-shift-q= ['move-node-to-monitor LG', 'focus-monitor LG']
-alt-shift-w= ['move-node-to-monitor SAMSUNG','focus-monitor SAMSUNG']
+# alt-shift-q= ['move-node-to-monitor LG', 'focus-monitor LG']
+# alt-shift-w= ['move-node-to-monitor SAMSUNG','focus-monitor SAMSUNG']
+alt-shift-q= ['move-node-to-monitor main', 'focus-monitor main']
+alt-shift-w= ['move-node-to-monitor secondary','focus-monitor secondary']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
