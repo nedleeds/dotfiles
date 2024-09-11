@@ -7,3 +7,4 @@ tmux-client-*
 tmux-server-*
 .DS_S*
 !tmux/
+lazy-lock.json
