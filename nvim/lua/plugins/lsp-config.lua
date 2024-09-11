@@ -6,6 +6,7 @@ return {
         ensure_installed = {
           "codelldb",
           "pyright",
+          "pylyzer",
           "ruff",
           "debugpy",
           "html",
@@ -25,6 +26,7 @@ return {
           "jsonls",
           "bashls",
           "pyright",
+          "pylyzer",
           "ruff",
           "clangd",
           "html",
@@ -33,40 +35,72 @@ return {
     end,
   },
 
+  -- lspconfig 설정
   {
     "neovim/nvim-lspconfig",
     config = function()
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       local lspconfig = require("lspconfig")
 
+      -- 공통 on_attach 함수
       local on_attach = function(client, bufnr)
-        -- auto formatting when press :w
+        -- 자동 포맷팅 설정
         if client.server_capabilities.documentFormattingProvider then
-          vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.format({ async = true })")
+          vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = bufnr,
+            callback = function()
+              vim.lsp.buf.format({ async = true })
+            end,
+          })
         end
 
-        -- local buf_set_keymap = vim.api.nvim_buf_set_keymap
-        -- local opts = { noremap = true, silent = true }
-        -- buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-        -- buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-        -- buf_set_keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+        -- 기본 LSP 키맵 설정
+        local opts = { noremap = true, silent = true }
+        local buf_set_keymap = vim.api.nvim_buf_set_keymap
+        buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+        buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+        buf_set_keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
       end
 
       -- LSP 서버 설정
       lspconfig.lua_ls.setup({
         capabilities = capabilities,
-        -- on_attach = on_attach,
-      })
-      lspconfig.pyright.setup({
-        filetypes = { "python" },
-        capabilities = capabilities,
         on_attach = on_attach,
       })
+
+      -- -- pylyzer 설정 (Python용 LSP 서버)
+      -- lspconfig.pylyzer.setup({
+      --   filetypes = { "python" },
+      --   capabilities = capabilities,
+      --   on_attach = on_attach,
+      --   settings = {
+      --     python = {
+      --       checkOnType = true,
+      --       diagnostics = true,
+      --       inlayHints = true,
+      --       smartCompletion = true,
+      --       analysis = {
+      --         typeCheckingMode = "strict", -- type checking 최소화하여 ruff와의 충돌 방지
+      --         autoSearchPaths = true,
+      --         useLibraryCodeForTypes = true,
+      --       },
+      --     },
+      --   },
+      -- })
+
       lspconfig.ruff.setup({
         filetypes = { "python" },
         capabilities = capabilities,
         on_attach = on_attach,
       })
+
+      lspconfig.pyright.setup({
+        filetypes = { "python" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      -- 기타 LSP 서버 설정
       lspconfig.tsserver.setup({
         capabilities = capabilities,
         on_attach = on_attach,
@@ -88,14 +122,9 @@ return {
         on_attach = on_attach,
         filetypes = { "html", "htm" },
         init_options = {
-          provideFormatter = true, -- 포맷터 제공 여부
+          provideFormatter = true,
         },
-        settings = {},
       })
-
-      -- vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-      -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
-      -- vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
     end,
   },
 }
