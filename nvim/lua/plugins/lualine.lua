@@ -6,12 +6,12 @@ return {
       blue = "#80a0ff",
       blue2 = "#3fa3ff",
       cyan = "#79dac8",
-      green = "#33997f",
+      green = "#138933",
       black = "#080808",
       yellow = "#f3CC33",
       white = "#c6c6c6",
       red = "#ff5189",
-      organge = "#ff9e64",
+      orange = "#ff9e64",
       violet = "#6f71ff",
       grey = "#303030",
     }
@@ -30,8 +30,9 @@ return {
         c = { fg = colors.white },
         y = { fg = colors.white, bg = colors.grey },
       },
-      visual = { a = { fg = colors.black, bg = colors.organge } },
-      replace = { a = { fg = colors.black, bg = colors.red } },
+      visual = { a = { fg = colors.black, bg = colors.orange } },
+      replace = { a = { fg = colors.black, bg = colors.cyan } },
+      command = { a = { fg = colors.black, bg = colors.red } },
 
       inactive = {
         a = { fg = colors.white, bg = colors.black },
