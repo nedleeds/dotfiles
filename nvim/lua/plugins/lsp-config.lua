@@ -11,6 +11,9 @@ return {
           "debugpy",
           "html",
           "htmlhint",
+          "dockerls",
+          "docker_compose_language_service",
+          "hadolint",
         },
       })
     end,
@@ -30,6 +33,8 @@ return {
           "ruff",
           "clangd",
           "html",
+          "dockerls",
+          "docker_compose_language_service",
         },
       })
     end,
@@ -124,6 +129,17 @@ return {
         init_options = {
           provideFormatter = true,
         },
+      })
+      -- Dockerfile LSP 서버 설정
+      lspconfig.dockerls.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      -- Docker Compose LSP 서버 설정
+      lspconfig.docker_compose_language_service.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
       })
     end,
   },
