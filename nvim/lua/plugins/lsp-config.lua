@@ -14,7 +14,7 @@ return {
           "dockerls",
           "docker_compose_language_service",
           "hadolint",
-          "tsserver",
+          "eslint",
           "jsonls",
           "bashls",
           "dockerls",
@@ -33,7 +33,7 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = {
           "lua_ls",
-          "tsserver",
+          "eslint",
           "jsonls",
           "bashls",
           "pyright",
@@ -114,7 +114,7 @@ return {
       })
 
       -- 기타 LSP 서버 설정
-      lspconfig.tsserver.setup({
+      lspconfig.eslint.setup({
         capabilities = capabilities,
         on_attach = on_attach,
       })
