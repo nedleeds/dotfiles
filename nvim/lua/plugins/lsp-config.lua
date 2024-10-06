@@ -5,6 +5,7 @@ return {
       require("mason").setup({
         ensure_installed = {
           "codelldb",
+          "clangd",
           "pyright",
           "pylyzer",
           "ruff",
