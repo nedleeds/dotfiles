@@ -14,6 +14,13 @@ return {
           "dockerls",
           "docker_compose_language_service",
           "hadolint",
+          "tsserver",
+          "jsonls",
+          "bashls",
+          "dockerls",
+          "docker_compose_language_service",
+          "jsonls",
+          "bashls",
         },
       })
     end,
