@@ -21,6 +21,7 @@ return {
           "docker_compose_language_service",
           "jsonls",
           "bashls",
+          "js-debug-adapter",
         },
       })
     end,
