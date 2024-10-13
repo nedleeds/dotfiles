@@ -5,9 +5,7 @@ return {
       require("mason").setup({
         ensure_installed = {
           "codelldb",
-          "clangd",
-          "pyright",
-          "pylyzer",
+          "jedi_language_server",
           "ruff",
           "debugpy",
           "html",
@@ -36,8 +34,7 @@ return {
           "eslint",
           "jsonls",
           "bashls",
-          "pyright",
-          "pylyzer",
+          "jedi_language_server",
           "ruff",
           "clangd",
           "html",
@@ -81,25 +78,10 @@ return {
         on_attach = on_attach,
       })
 
-      -- -- pylyzer 설정 (Python용 LSP 서버)
-      -- lspconfig.pylyzer.setup({
-      --   filetypes = { "python" },
-      --   capabilities = capabilities,
-      --   on_attach = on_attach,
-      --   settings = {
-      --     python = {
-      --       checkOnType = true,
-      --       diagnostics = true,
-      --       inlayHints = true,
-      --       smartCompletion = true,
-      --       analysis = {
-      --         typeCheckingMode = "strict", -- type checking 최소화하여 ruff와의 충돌 방지
-      --         autoSearchPaths = true,
-      --         useLibraryCodeForTypes = true,
-      --       },
-      --     },
-      --   },
-      -- })
+      lspconfig.jedi_language_server.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
 
       lspconfig.ruff.setup({
         filetypes = { "python" },
@@ -107,13 +89,6 @@ return {
         on_attach = on_attach,
       })
 
-      lspconfig.pyright.setup({
-        filetypes = { "python" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-
-      -- 기타 LSP 서버 설정
       lspconfig.eslint.setup({
         capabilities = capabilities,
         on_attach = on_attach,
@@ -123,10 +98,6 @@ return {
         on_attach = on_attach,
       })
       lspconfig.bashls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-      lspconfig.clangd.setup({
         capabilities = capabilities,
         on_attach = on_attach,
       })
