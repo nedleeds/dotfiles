@@ -66,6 +66,14 @@ return {
       end,
     },
     {
+      ";g",
+      function()
+        local builtin = require("telescope.builtin")
+        builtin.lsp_references()
+      end,
+      desc = "Find References",
+    },
+    {
       "sf",
       function()
         local telescope = require("telescope")
