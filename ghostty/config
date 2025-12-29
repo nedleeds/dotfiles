@@ -1,0 +1,16 @@
+custom-shader = shaders/tesla_coil.glsl
+theme = light:GitHub Light High Contrast,dark:GitHub Dark Default
+background = black
+background-opacity = 0.9
+background-blur = 3
+font-family = "JetBrainsMono Nerd Font"
+font-size = 15
+macos-titlebar-style = "hidden"
+mouse-hide-while-typing = true
+window-padding-x = 15, 15
+window-padding-y = 10, 0
+shell-integration-features = no-cursor
+cursor-style = underline
+adjust-cursor-thickness = 1
+split-divider-color = #208fff
+
