@@ -1,2 +1,17 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
-require("config.lazy")
+require("config.options")
+
+require("plugins.colorscheme")
+require("plugins.lua-line")
+require("plugins.mini-tabline")
+require("plugins.oil")
+require("plugins.fzf-lua")
+require("plugins.lazygit")
+require("plugins.noice")
+require("plugins.toggleterm")
+require("plugins.nvim-lspconfig")
+require("plugins.nvim-treesitter")
+require("plugins.nvim-dap")
+require("plugins.nvim-dap-python")
+require("plugins.zoom")
+
+require("config.keymaps")

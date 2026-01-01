@@ -1,6 +1,18 @@
--- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.expandtab = true
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.softtabstop = 4
+vim.o.swapfile = false
+vim.o.winborder = 'rounded'
+vim.o.signcolumn = "yes"
+vim.o.splitright = true
+vim.o.showtabline = 2
+vim.o.termguicolors = true
 
-vim.cmd([[let &t_Cs = "\e[4:3m"]])
-vim.cmd([[let &t_Ce = "\e[4:0m"]])
+if vim.fn.has("unnamedplus") == 1 then
+    vim.o.clipboard = "unnamedplus"
+else
+    vim.o.clipboard = "unnamed"
+end

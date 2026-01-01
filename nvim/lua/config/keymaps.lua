@@ -1,57 +1,195 @@
--- 기본 키맵 설정
-local keymaps = vim.keymap
+vim.g.mapleader = " "
+
 local opts = { noremap = true, silent = true }
 
-keymaps.set("n", "<M-A-j>", "<Esc>:m .+1<cr>==", { desc = "Move down" })
-keymaps.set("n", "<M-A-k>", "<Esc>:m .-2<cr>==", { desc = "Move up" })
+vim.keymap.set("n", "<leader>w", ":w<CR>", opts)
+vim.keymap.set("n", "<leader>q", ":q<CR>", opts)
+vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", opts)
 
--- increment / Decrement
-keymaps.set("n", "+", "<C-a>")
-keymaps.set("n", "-", "<C-x>")
+vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, opts)
 
--- select all
-keymaps.set("n", "<C-a>", "ggVG")
+-- Oil
+vim.keymap.set("n", "<leader>e", ":Oil --float<CR>", opts)
 
--- jumplist
-keymaps.set("n", "<C-m>", "<C-i>", opts)
+-- fzf-lua
+vim.keymap.set("n", "<leader>f", ":FzfLua files<CR>", opts)
+vim.keymap.set("n", "<leader>b", ":FzfLua buffers<CR>", opts)
+vim.keymap.set("n", "<leader>/", ":FzfLua blines<CR>", opts)
+vim.keymap.set("n", "<leader>g", ":FzfLua live_grep<CR>", opts)
 
--- new tab
-keymaps.set("n", "te", ":tabedit<Return>", opts)
-keymaps.set("n", "<tab>", ":tabnext<Return>", opts)
-keymaps.set("n", "<s-tab>", ":tabprev<Return>", opts)
+-- Buffers
+vim.keymap.set("n", "<S-l>", ":bnext<CR>", opts)
+vim.keymap.set("n", "<S-h>", ":bprevious<CR>", opts)
+vim.keymap.set("n", "<leader>bd", ":bdelete<CR>", opts)
+vim.keymap.set("n", "<leader>bo", ":silent! %bd|e#|bd#<CR>", opts)
 
--- split windows
-keymaps.set("n", "ss", ":split<Return>", opts)
-keymaps.set("n", "sv", ":vsplit<Return>", opts)
+-- lazygit
+vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>", opts)
 
--- resize windows
-keymaps.set("n", "<C-w><left>", "<C-w><")
-keymaps.set("n", "<C-w><right>", "<C-w>>")
-keymaps.set("n", "<C-w><up>", "<C-w>=")
-keymaps.set("n", "<C-w><down>", "<C-w>-")
+-- noice
+vim.keymap.set("n", "<leader>n", ":NoiceAll<CR>", opts)
 
-vim.opt.timeout = true
-vim.opt.timeoutlen = 300
+--------------------- lsp
+-- Go to definition / declaration / implementation / type definition
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "LSP Definition" })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "LSP Declaration" })
+vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "LSP Implementation" })
+vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { desc = "LSP Type Definition" })
 
--- 일반 모드에서 다음과 이전 진단으로 이동
-keymaps.set("n", "<C-0>", vim.diagnostic.goto_next, opts)
-keymaps.set("n", "<C-9>", vim.diagnostic.goto_prev, opts)
+-- References
+vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "LSP References" })
 
--- Diagnostic 결과 창에서 ESC로 닫기 설정
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "qf", "diagnostic" },
-  callback = function()
-    -- ESC로 결과 창 닫기
-    vim.keymap.set("n", "<Esc>", "<cmd>cclose<CR>", { buffer = true, silent = true, noremap = true })
+-- Rename / Code Action
+vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "LSP Rename" })
+vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP Code Action" })
 
-    -- 결과 창에서 C-0으로 다음 diagnostic으로 이동
-    vim.keymap.set("n", "<C-0>", function()
-      vim.diagnostic.goto_next({ float = false }) -- float 옵션을 비활성화하여 QuickFix 창에서 이동
-    end, { buffer = true, silent = true, noremap = true })
+-- Diagnostics
+vim.keymap.set("n", "<leader>D", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+vim.keymap.set("n", "[D", function()
+  vim.diagnostic.jump({ count = -1 })
+end, { desc = "Prev diagnostic" })
 
-    -- 결과 창에서 C-9으로 이전 diagnostic으로 이동
-    vim.keymap.set("n", "<C-9>", function()
-      vim.diagnostic.goto_prev({ float = false }) -- float 옵션을 비활성화하여 QuickFix 창에서 이동
-    end, { buffer = true, silent = true, noremap = true })
-  end,
+vim.keymap.set("n", "]D", function()
+  vim.diagnostic.jump({ count = 1 })
+end, { desc = "Next diagnostic" })
+
+-- Toggleterm
+-- =========================================================
+-- ToggleTerm Vim-like terminal behavior
+-- =========================================================
+
+-- Terminal mode -> Normal mode
+vim.keymap.set("t", "<C-[>", [[<C-\><C-n>]], {
+  desc = "Terminal: enter normal mode",
 })
+
+-- Terminal normal mode -> Insert mode
+vim.keymap.set("n", "i", function()
+  if vim.bo.buftype == "terminal" then
+    vim.cmd("startinsert")
+  else
+    return "i"
+  end
+end, {
+  expr = true,
+  desc = "Terminal: normal -> insert",
+})
+
+-- move
+-- Window navigation without <C-w>
+vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, silent = true, desc = "Win left" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { noremap = true, silent = true, desc = "Win down" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { noremap = true, silent = true, desc = "Win up" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true, desc = "Win right" })
+
+
+-- Ctrl+Z : Window Zoom toggle
+vim.keymap.set("n", "<C-z>", function()
+  require("plugins.zoom").toggle()
+end, {
+  desc = "Window Zoom (same tab)",
+})
+
+-- Split windows
+vim.keymap.set("n", "<leader>ws", "<C-w>s", {
+  noremap = true,
+  silent = true,
+  desc = "Window: split horizontally",
+})
+
+vim.keymap.set("n", "<leader>wv", "<C-w>v", {
+  noremap = true,
+  silent = true,
+  desc = "Window: split vertically",
+})
+
+-- Close current window
+vim.keymap.set("n", "<leader>wd", function()
+  vim.cmd("close")
+end, {
+  noremap = true,
+  silent = true,
+  desc = "Window: close current",
+})
+
+-- =========================================================
+-- Window resize (NO Ctrl, NO Arrow)
+-- <leader>w + hjkl
+-- =========================================================
+
+local resize_step = 5
+
+-- Width (left / right)
+vim.keymap.set("n", "-", function()
+  vim.cmd("vertical resize -" .. resize_step)
+end, { noremap = true, silent = true, desc = "Window: decrease width" })
+
+vim.keymap.set("n", "=", function()
+  vim.cmd("vertical resize +" .. resize_step)
+end, { noremap = true, silent = true, desc = "Window: increase width" })
+
+-- Height (down / up)
+vim.keymap.set("n", "_", function()
+  vim.cmd("resize -" .. resize_step)
+end, { noremap = true, silent = true, desc = "Window: decrease height" })
+
+vim.keymap.set("n", "+", function()
+  vim.cmd("resize +" .. resize_step)
+end, { noremap = true, silent = true, desc = "Window: increase height" })
+
+-- DAP
+-- =========================================================
+-- DAP (nvim-dap / nvim-dap-ui)
+-- <leader>d*
+-- =========================================================
+
+-- Debug flow (arrow keys)
+vim.keymap.set("n", "<leader>dc", function()
+  require("dap").continue()
+end, { noremap = true, silent = true, desc = "DAP: Continue" })
+
+vim.keymap.set("n", "<leader>do", function()
+  require("dap").step_over()
+end, { noremap = true, silent = true, desc = "DAP: Step over" })
+
+vim.keymap.set("n", "<leader>di", function()
+  require("dap").step_into()
+end, { noremap = true, silent = true, desc = "DAP: Step into" })
+
+vim.keymap.set("n", "<leader>dO", function()
+  require("dap").step_out()
+end, { noremap = true, silent = true, desc = "DAP: Step out" })
+
+-- Breakpoints
+vim.keymap.set("n", "<leader>db", function()
+  require("dap").toggle_breakpoint()
+end, { noremap = true, silent = true, desc = "DAP: Toggle breakpoint" })
+
+-- 빈 입력이면 일반 BP로 fallback (실전 UX)
+vim.keymap.set("n", "<leader>dB", function()
+  local cond = vim.fn.input("Breakpoint condition: ")
+  if cond == nil or cond == "" then
+    require("dap").toggle_breakpoint()
+  else
+    require("dap").set_breakpoint(cond)
+  end
+end, { noremap = true, silent = true, desc = "DAP: Conditional breakpoint" })
+
+-- UI / REPL
+vim.keymap.set("n", "<leader>du", function()
+  require("dapui").toggle()
+end, { noremap = true, silent = true, desc = "DAP-UI: Toggle" })
+
+vim.keymap.set("n", "<leader>dr", function()
+  require("dap").repl.open()
+end, { noremap = true, silent = true, desc = "DAP: REPL" })
+
+-- Optional: terminate / restart
+vim.keymap.set("n", "<leader>dq", function()
+  require("dap").terminate()
+end, { noremap = true, silent = true, desc = "DAP: Terminate" })
+
+vim.keymap.set("n", "<leader>dR", function()
+  require("dap").restart()
+end, { noremap = true, silent = true, desc = "DAP: Restart" })
+
