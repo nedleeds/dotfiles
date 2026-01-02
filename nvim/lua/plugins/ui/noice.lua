@@ -1,9 +1,3 @@
-vim.pack.add({
-    { src = "https://github.com/rcarriga/nvim-notify" },
-    { src = "https://github.com/MunifTanjim/nui.nvim" },
-    { src = "https://github.com/folke/noice.nvim" },
-})
-
 -- =========================================================
 -- nvim-notify background fix (for transparent themes)
 -- 반드시 noice.setup() 이전에 실행

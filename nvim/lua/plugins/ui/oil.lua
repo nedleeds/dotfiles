@@ -1,7 +1,3 @@
-vim.pack.add({
-    "https://github.com/stevearc/oil.nvim",
-})
-
 require("oil").setup({
   dependencies = { { "nvim-mini/mini.icons", opts = {} } },
   -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)

@@ -1,9 +1,3 @@
-vim.pack.add({
-  { src = "https://github.com/nvim-lualine/lualine.nvim" },
-  -- lualine 아이콘이 필요하면(권장):
-  { src = "https://github.com/nvim-tree/nvim-web-devicons", opt = true },
-})
-
 local ok, lualine = pcall(require, "lualine")
 if not ok then
   return

@@ -21,7 +21,11 @@ vim.keymap.set("n", "<leader>g", ":FzfLua live_grep<CR>", opts)
 vim.keymap.set("n", "<S-l>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<S-h>", ":bprevious<CR>", opts)
 vim.keymap.set("n", "<leader>bd", ":bdelete<CR>", opts)
-vim.keymap.set("n", "<leader>bo", ":silent! %bd|e#|bd#<CR>", opts)
+vim.keymap.set("n", "<leader>bo", function()
+  local v = vim.fn.winsaveview()
+  vim.cmd("silent! %bd | e# | bd#")
+  vim.fn.winrestview(v)
+end, { silent = true, desc = "Close other buffers (keep view)" })
 
 -- lazygit
 vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>", opts)
@@ -45,11 +49,11 @@ vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "LS
 
 -- Diagnostics
 vim.keymap.set("n", "<leader>D", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-vim.keymap.set("n", "[D", function()
+vim.keymap.set("n", "[d", function()
   vim.diagnostic.jump({ count = -1 })
 end, { desc = "Prev diagnostic" })
 
-vim.keymap.set("n", "]D", function()
+vim.keymap.set("n", "]d", function()
   vim.diagnostic.jump({ count = 1 })
 end, { desc = "Next diagnostic" })
 
@@ -85,7 +89,7 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true, desc = "
 
 -- Ctrl+Z : Window Zoom toggle
 vim.keymap.set("n", "<C-z>", function()
-  require("plugins.zoom").toggle()
+  require("plugins.ui.zoom").toggle()
 end, {
   desc = "Window Zoom (same tab)",
 })
@@ -192,4 +196,20 @@ end, { noremap = true, silent = true, desc = "DAP: Terminate" })
 vim.keymap.set("n", "<leader>dR", function()
   require("dap").restart()
 end, { noremap = true, silent = true, desc = "DAP: Restart" })
+
+
+-- insert mode에서 pum 보일 때 C-j/C-k로 다음/이전 항목 선택
+vim.keymap.set("i", "<C-j>", function()
+  if vim.fn.pumvisible() == 1 then
+    return "<C-n>"
+  end
+  return "<C-j>"
+end, { expr = true, noremap = true })
+
+vim.keymap.set("i", "<C-k>", function()
+  if vim.fn.pumvisible() == 1 then
+    return "<C-p>"
+  end
+  return "<C-k>"
+end, { expr = true, noremap = true })
 
