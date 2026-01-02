@@ -35,6 +35,7 @@ local function lua_ls_settings_for(bufnr)
 end
 
 local grp = U.augroup("lsp_attach")
+vim.g.__lsp_attach_grp = grp
 
 vim.api.nvim_create_autocmd("FileType", {
   group = grp,
@@ -91,5 +92,38 @@ vim.api.nvim_create_autocmd("FileType", {
         root_dir = root,
       }, { bufnr = bufnr })
     end
+  end,
+})
+
+local CLANG = require("config.clangd")
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = grp,
+  pattern = { "c", "cpp", "objc", "objcpp" },
+  callback = function(args)
+    local bufnr = args.buf
+    if U.is_client_attached("clangd", bufnr) then return end
+
+    local root = CLANG.cpp_root_dir(bufnr)
+    local ccdir = CLANG.compile_commands_dir(root)
+
+    local cmd = {
+      "/opt/homebrew/opt/llvm/bin/clangd",
+      "--background-index",
+      "--clang-tidy",
+      "--completion-style=detailed",
+      "--header-insertion=iwyu",
+      "--fallback-style=llvm",
+    }
+
+    if ccdir then
+      table.insert(cmd, "--compile-commands-dir=" .. ccdir)
+    end
+
+    vim.lsp.start({
+      name = "clangd",
+      cmd = cmd,
+      root_dir = root,
+    }, { bufnr = bufnr })
   end,
 })
