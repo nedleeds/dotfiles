@@ -1,4 +1,6 @@
-custom-shader = shaders/tesla_coil.glsl
+custom-shader = shaders/thor.glsl
+# custom-shader = shaders/flash.glsl
+# custom-shader = shaders/flame.glsl
 theme = light:GitHub Light High Contrast,dark:GitHub Dark Default
 background = black
 background-opacity = 0.9
@@ -11,6 +13,6 @@ window-padding-x = 15, 15
 window-padding-y = 10, 0
 shell-integration-features = no-cursor
 cursor-style = underline
-adjust-cursor-thickness = 1
+adjust-cursor-thickness = 2
 split-divider-color = #208fff
-
+copy-on-select = clipboard
