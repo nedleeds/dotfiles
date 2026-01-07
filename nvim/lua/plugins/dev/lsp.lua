@@ -127,3 +127,48 @@ vim.api.nvim_create_autocmd("FileType", {
     }, { bufnr = bufnr })
   end,
 })
+
+
+-- Zig (zls)
+local function zig_root_dir(bufnr)
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  local dir = vim.fs.dirname(name)
+  if not dir then
+    return vim.fn.getcwd()
+  end
+
+  -- build.zig / build.zig.zon / .git 를 루트 마커로 사용
+  local root = vim.fs.root(dir, { "build.zig", "build.zig.zon", ".git" })
+  return root or dir
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = grp,
+  pattern = "zig",
+  callback = function(args)
+    local bufnr = args.buf
+    if U.is_client_attached("zls", bufnr) then return end
+
+    local root = zig_root_dir(bufnr)
+
+    -- 당신이 빌드한 zig 우선 사용 (없으면 PATH의 zig로 fallback)
+    local zig_exe = vim.fn.expand("~/bin/zig")
+    if vim.fn.executable(zig_exe) ~= 1 then
+      zig_exe = vim.fn.exepath("zig")
+    end
+
+    vim.lsp.start({
+      name = "zls",
+      cmd = { "zls" },
+      root_dir = root,
+      settings = {
+        zls = {
+          zig_exe_path = zig_exe,
+          -- 아래 옵션들은 zls 버전에 따라 지원 여부가 다를 수 있습니다.
+          -- enable_inlay_hints = true,
+          -- warn_style = true,
+        },
+      },
+    }, { bufnr = bufnr })
+  end,
+})

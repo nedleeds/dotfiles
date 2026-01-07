@@ -5,7 +5,7 @@ local opts = { noremap = true, silent = true }
 vim.keymap.set("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", opts)
 vim.keymap.set("n", "<leader>w", ":w<CR>", opts)
 vim.keymap.set("n", "<leader>q", ":q<CR>", opts)
-vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", opts)
+vim.keymap.set("n", "<leader>o", "<Cmd>update<CR><Cmd>source %<CR>", opts)
 
 vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, opts)
 
@@ -214,3 +214,22 @@ vim.keymap.set("i", "<C-k>", function()
   return "<C-k>"
 end, { expr = true, noremap = true })
 
+-- Formatting
+vim.keymap.set("n", "<leader>T", ":retab<CR>", opts)
+vim.api.nvim_create_autocmd("BufWritePre", {
+    group = group,
+    pattern = "*",
+    callback = function()
+    -- 저장 전 상태 보존
+    local view = vim.fn.winsaveview()
+    -- 라인 끝 공백 제거
+    vim.cmd([[silent! %s/\s\+$//e]])
+    -- 상태 복원
+    vim.fn.winrestview(view) end, })
+vim.keymap.set("n", "<leader>.", function()
+    vim.opt.list = not
+    vim.opt.list:get()
+    if vim.opt.list:get() then
+        vim.opt.listchars = { tab = ">>", trail = "." }
+    end
+end, { desc = "Toggle whitespace" })
