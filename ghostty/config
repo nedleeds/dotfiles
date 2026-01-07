@@ -1,10 +1,11 @@
-custom-shader = shaders/thor.glsl
+# custom-shader = shaders/thor.glsl
+custom-shader = shaders/thor_purple.glsl
 # custom-shader = shaders/flash.glsl
 # custom-shader = shaders/flame.glsl
 theme = light:GitHub Light High Contrast,dark:GitHub Dark Default
 background = black
 background-opacity = 0.9
-background-blur = 3
+background-blur = 35
 font-family = "JetBrainsMono Nerd Font"
 font-size = 15
 macos-titlebar-style = "hidden"
