@@ -20,6 +20,7 @@ $shell\
 
 [os]
 symbols.Debian = ""
+symbols.Ubuntu = "[\uebc9](#fd4e00)"
 symbols.Macos = ""
 disabled = false
 format = "[$symbol]($style)"
@@ -65,7 +66,7 @@ format = ' [$symbol $name:$version]($style)'
 
 [python]
 disabled = false
-pyenv_version_name = true
+pyenv_version_name = false
 detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini']
 symbol = ' '
 # format = ' [$symbol](22) [$version](#e4e4e4)[$virtualenv](22)'
@@ -79,11 +80,15 @@ symbol = ' '
 format = '[$symbol$environment](dimmed green) '
 
 [docker_context]
-symbol = '[U] '
-detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
+symbol = " "
 only_with_files = false
-style = '#3fa3ff bold'
-format = '[$symbol]($style)[$context](#e4e4e4)'
+detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
+# icon = blue, name = white
+style = "fg:#3fa3ff bold"
+# context가 있으면 이름, 없으면 docker
+format = '''
+[$symbol]($style)[${context:-docker}](fg:#e4e4e4)
+'''
 
 [cmd_duration]
 format = "[ 󱦟 $duration ]($style)"
@@ -98,6 +103,7 @@ format = '[  ](99)[$time](bg:none fg:#E4E4E4) '
 style = "fg:#e4e4e4 bg:#none"
 bash_indicator = '[ ](205)[bash]($style)'
 zsh_indicator = '[ ](205)[zsh]($style)'
+fish_indicator = '[ ](205)[fish]($style)'
 disabled = false
 format = ' [$indicator]($style)'
 
