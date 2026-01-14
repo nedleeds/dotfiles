@@ -8,8 +8,9 @@ require("oil").setup({
   columns = {
     "icon",
     -- "permissions",
-    -- "size",
-    "mtime",
+    "size",
+    -- "mtime",
+    { "mtime", format = "%y.%m.%d-%H:%M:%S" },
   },
   -- Buffer-local options to use for oil buffers
   buf_options = {

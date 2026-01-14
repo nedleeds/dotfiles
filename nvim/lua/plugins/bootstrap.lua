@@ -1,8 +1,7 @@
 -- lua/plugins/bootstrap.lua
-vim.pack.add({
-  -- ---------------------------------------------------------
+
+local specs = {
   -- Core UI
-  -- ---------------------------------------------------------
   { src = "https://github.com/nvim-lualine/lualine.nvim" },
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
 
@@ -16,28 +15,22 @@ vim.pack.add({
 
   { src = "https://github.com/echasnovski/mini.tabline" },
 
-  -- ---------------------------------------------------------
-  -- LSP / Treesitter
-  -- ---------------------------------------------------------
-  { src = "https://github.com/neovim/nvim-lspconfig" },
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "master", build = ":TSUpdate" },
+  { src = "https://github.com/folke/which-key.nvim" },
 
-  -- ---------------------------------------------------------
+  -- LSP / Treesitter
+  { src = "https://github.com/neovim/nvim-lspconfig" },
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "master" },
+
   -- DAP
-  -- ---------------------------------------------------------
   { src = "https://github.com/mfussenegger/nvim-dap" },
   { src = "https://github.com/rcarriga/nvim-dap-ui" },
   { src = "https://github.com/nvim-neotest/nvim-nio" },
   { src = "https://github.com/mfussenegger/nvim-dap-python" },
 
-  -- ---------------------------------------------------------
   -- Git
-  -- ---------------------------------------------------------
   { src = "https://github.com/kdheepak/lazygit.nvim" },
 
-  -- ---------------------------------------------------------
-  -- Colorschemes (optional, keep as you like)
-  -- ---------------------------------------------------------
+  -- Colorschemes
   { src = "https://github.com/folke/tokyonight.nvim" },
   { src = "https://github.com/catppuccin/nvim" },
   { src = "https://github.com/rose-pine/neovim" },
@@ -49,4 +42,4 @@ vim.pack.add({
   { src = "https://github.com/EdenEast/nightfox.nvim" },
   { src = "https://github.com/marko-cerovac/material.nvim" },
   { src = "https://github.com/cocopon/iceberg.vim" },
-})
+}

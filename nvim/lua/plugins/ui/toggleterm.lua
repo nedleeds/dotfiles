@@ -1,10 +1,7 @@
 require("toggleterm").setup({
-  shade_terminals = true,
-  shading_factor = 1,
   open_mapping = [[<C-\>]],
   direction = "float",
-  float_opts = {
-    border = "rounded",
-    winblend = 0,
-  },
+  -- shell = "C:/PROGRA~1/Git/bin/bash.exe",
+  shell = "pwsh.exe",
+  float_opts = { border = "rounded" },
 })

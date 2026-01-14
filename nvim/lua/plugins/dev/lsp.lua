@@ -1,6 +1,51 @@
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.general = capabilities.general or {}
+capabilities.general.positionEncodings = { "utf-8" }
+
 -- lua/plugins/dev/lsp.lua
 local U = require("config.util")
 local PY = require("config.python")
+
+-- Windows 로컬 LSP 바이너리 우선 사용 (없으면 PATH fallback)
+local uv = vim.uv or vim.loop
+
+local function path_join(...)
+  local parts = { ... }
+  return table.concat(parts, "\\")
+end
+
+local APPS = path_join(vim.env.LOCALAPPDATA, "nvim", "lsp-server")
+
+local function exists(p)
+  return p and uv.fs_stat(p) ~= nil
+end
+
+-- candidate 목록 중 "처음으로 존재하는 경로"를 채택, 없으면 fallback(원래 커맨드)
+local function pick_cmd(candidates, fallback)
+  for _, p in ipairs(candidates) do
+    if exists(p) then
+      return p
+    end
+  end
+  return fallback
+end
+
+-- pyright: npm 로컬 설치 위치 케이스들
+local PYRIGHT_BIN = pick_cmd({
+  path_join(APPS, "pyright", "pyright-langserver.cmd"),
+}, "pyright-langserver")
+
+-- ruff: 로컬로 둘 경우 예시(아래 설치 가이드 참고)
+local RUFF_BIN = pick_cmd({
+  path_join(APPS, "ruff", "ruff.exe"),
+}, "ruff")
+
+vim.g.ruff_bin = RUFF_BIN
+
+-- lua-language-server: 로컬로 둘 경우 예시(아래 설치 가이드 참고)
+local LUA_LS_BIN = pick_cmd({
+  path_join(APPS, "lua-language-server", "bin", "lua-language-server.exe"),
+}, "lua-language-server")
 
 -- lua_ls root / settings (기존 로직 유지)
 local function lua_ls_root_dir(bufnr)
@@ -46,8 +91,9 @@ vim.api.nvim_create_autocmd("FileType", {
 
     vim.lsp.start({
       name = "lua_ls",
-      cmd = { "lua-language-server" },
+      cmd = { LUA_LS_BIN },
       root_dir = lua_ls_root_dir(bufnr),
+      capabilities = capabilities,
       settings = lua_ls_settings_for(bufnr),
     }, { bufnr = bufnr })
   end,
@@ -57,6 +103,10 @@ vim.api.nvim_create_autocmd("FileType", {
   group = grp,
   pattern = "python",
   callback = function(args)
+    vim.opt_local.expandtab = true
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.tabstop = 4
+    vim.opt_local.softtabstop = 4
     local bufnr = args.buf
     local root = PY.py_root_dir(bufnr)
     local py = PY.python_path_for(root)
@@ -64,12 +114,15 @@ vim.api.nvim_create_autocmd("FileType", {
     if not U.is_client_attached("pyright", bufnr) then
       vim.lsp.start({
         name = "pyright",
-        cmd = { "pyright-langserver", "--stdio" },
+        cmd = { PYRIGHT_BIN, "--stdio" },
         root_dir = root,
+        capabilities = capabilities,
         settings = {
           python = {
             pythonPath = py,
             analysis = {
+              pythonVersion = "3.8",
+              pythonPlatform = "Windows",
               typeCheckingMode = "basic",
               autoSearchPaths = true,
               useLibraryCodeForTypes = true,
@@ -88,7 +141,8 @@ vim.api.nvim_create_autocmd("FileType", {
     if not U.is_client_attached("ruff", bufnr) then
       vim.lsp.start({
         name = "ruff",
-        cmd = { "ruff", "server" },
+        cmd = { RUFF_BIN, "server" },
+        capabilities = capabilities,
         root_dir = root,
       }, { bufnr = bufnr })
     end
@@ -108,7 +162,7 @@ vim.api.nvim_create_autocmd("FileType", {
     local ccdir = CLANG.compile_commands_dir(root)
 
     local cmd = {
-      "/opt/homebrew/opt/llvm/bin/clangd",
+      "C:\\Program Files\\LLVM\\bin\\clangd.exe",
       "--background-index",
       "--clang-tidy",
       "--completion-style=detailed",
@@ -124,51 +178,6 @@ vim.api.nvim_create_autocmd("FileType", {
       name = "clangd",
       cmd = cmd,
       root_dir = root,
-    }, { bufnr = bufnr })
-  end,
-})
-
-
--- Zig (zls)
-local function zig_root_dir(bufnr)
-  local name = vim.api.nvim_buf_get_name(bufnr)
-  local dir = vim.fs.dirname(name)
-  if not dir then
-    return vim.fn.getcwd()
-  end
-
-  -- build.zig / build.zig.zon / .git 를 루트 마커로 사용
-  local root = vim.fs.root(dir, { "build.zig", "build.zig.zon", ".git" })
-  return root or dir
-end
-
-vim.api.nvim_create_autocmd("FileType", {
-  group = grp,
-  pattern = "zig",
-  callback = function(args)
-    local bufnr = args.buf
-    if U.is_client_attached("zls", bufnr) then return end
-
-    local root = zig_root_dir(bufnr)
-
-    -- 당신이 빌드한 zig 우선 사용 (없으면 PATH의 zig로 fallback)
-    local zig_exe = vim.fn.expand("~/bin/zig")
-    if vim.fn.executable(zig_exe) ~= 1 then
-      zig_exe = vim.fn.exepath("zig")
-    end
-
-    vim.lsp.start({
-      name = "zls",
-      cmd = { "zls" },
-      root_dir = root,
-      settings = {
-        zls = {
-          zig_exe_path = zig_exe,
-          -- 아래 옵션들은 zls 버전에 따라 지원 여부가 다를 수 있습니다.
-          -- enable_inlay_hints = true,
-          -- warn_style = true,
-        },
-      },
     }, { bufnr = bufnr })
   end,
 })

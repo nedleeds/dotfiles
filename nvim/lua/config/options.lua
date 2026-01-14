@@ -1,23 +1,51 @@
-vim.o.number = true
-vim.o.relativenumber = true
+-- Encoding
+vim.opt.encoding = "utf-8"
+vim.opt.fileencoding = "utf-8"
+vim.opt.fileencodings = { "utf-8", "cp949", "euc-kr", "default", "latin1" }
 
-vim.o.expandtab = true
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.o.softtabstop = 4
+-- UI / editor
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.signcolumn = "yes"
+vim.opt.splitright = true
+vim.opt.termguicolors = true
 
-vim.o.swapfile = false
-vim.o.winborder = "rounded"
-vim.o.signcolumn = "yes"
-vim.o.splitright = true
-vim.o.showtabline = 2
-vim.o.termguicolors = true
+-- Indent
+vim.opt.expandtab = true
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
 
--- Hide end-of-buffer "~"
-vim.o.fillchars = "eob: "
+-- Files
+vim.opt.swapfile = false
+vim.opt.fillchars = { eob = " " }
 
+-- Whitespace visualize
+vim.opt.list = true
+vim.opt.listchars = {
+  tab = ">-",
+  trail = ".",
+  extends = ">",
+  precedes = "<",
+  nbsp = "+"
+}
+
+
+-- Clipboard
 if vim.fn.has("unnamedplus") == 1 then
-  vim.o.clipboard = "unnamedplus"
+  vim.opt.clipboard = "unnamedplus"
 else
-  vim.o.clipboard = "unnamed"
+  vim.opt.clipboard = "unnamed"
 end
+
+-- Trim trailing whitespace (exclude markdown)
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype == "markdown" then return end
+    local pos = vim.api.nvim_win_get_cursor(0)
+    vim.cmd([[%s/\s\+$//e]])
+    vim.api.nvim_win_set_cursor(0, pos)
+  end,
+})
+

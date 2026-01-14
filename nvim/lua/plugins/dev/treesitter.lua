@@ -1,4 +1,9 @@
-local configs = require("nvim-treesitter.configs")
+-- lua/plugins/dev/treesitter.lua
+local ok, configs = pcall(require, "nvim-treesitter.configs")
+if not ok then
+  return
+end
+
 configs.setup({
   ensure_installed = { "lua", "python", "c", "cpp", "bash", "json", "yaml", "markdown" },
   auto_install = true,

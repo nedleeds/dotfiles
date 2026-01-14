@@ -47,7 +47,4 @@ function M.compile_commands_dir(root_dir)
   return nil
 end
 
-vim.g.dap_codelldb_path =
-  vim.fn.expand("~/.local/share/codelldb/extension/adapter/codelldb")
-
 return M

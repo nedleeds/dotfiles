@@ -8,3 +8,4 @@ tmux-server-*
 .DS_S*
 !tmux/
 lazy-lock.json
+nvim/lsp-server/

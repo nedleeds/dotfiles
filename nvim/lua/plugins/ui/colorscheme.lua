@@ -118,7 +118,7 @@
 
 
 -- =========================
--- GitHub theme
+-- GitHub Theme
 -- =========================
 local ok_gh, github = pcall(require, "github-theme")
 if not ok_gh then
@@ -137,51 +137,57 @@ github.setup({
 vim.cmd.colorscheme("github_dark_default")
 
 -- =========================
--- Minimal overrides (keep GitHub original tone)
+-- Base transparency
 -- =========================
-
--- Base transparency (원하는 컨셉 유지)
 vim.api.nvim_set_hl(0, "Normal",      { bg = "NONE" })
 vim.api.nvim_set_hl(0, "NormalNC",    { bg = "NONE" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
 
--- ToggleTerm float 투명 (원래 하던 것 유지)
+-- =========================
+-- ToggleTerm transparency
+-- =========================
 vim.api.nvim_set_hl(0, "ToggleTerm",            { bg = "NONE" })
 vim.api.nvim_set_hl(0, "ToggleTermNormal",      { bg = "NONE" })
 vim.api.nvim_set_hl(0, "ToggleTermNormalFloat", { bg = "NONE" })
 vim.api.nvim_set_hl(0, "ToggleTermBorder",      { bg = "NONE" })
 
--- LSP hover border: GitHub 테마의 Border 톤을 따르되, 둥근 테두리는 Noice preset으로 처리 권장
--- (색은 테마에 맡기고 싶으면 링크만)
-local ok, palette = pcall(require, "github-theme.palette")
-if ok then
-  local c = palette.load(vim.g.colors_name)
+-- =========================
+-- LSP Float Border (GitHub tone)
+-- =========================
+do
+  local okp, palette = pcall(require, "github-theme.palette")
+  if okp then
+    local c = palette.load(vim.g.colors_name)
 
-  local blue = c.blue
-  if type(blue) == "table" then
-    blue = blue.base or blue.fg or blue[1]
+    local function pick(v)
+      if type(v) == "string" then return v end
+      if type(v) == "table" then return v.base or v.fg or v[1] end
+    end
+
+    local blue = pick(c.blue)
+
+    vim.api.nvim_set_hl(0, "LspFloatBorder", {
+      fg = blue,
+      bg = "NONE",
+    })
+    vim.api.nvim_set_hl(0, "FloatBorder", { link = "LspFloatBorder" })
   end
-
-  vim.api.nvim_set_hl(0, "LspFloatBorder", {
-    fg = blue,
-    bg = "NONE",
-  })
-  vim.api.nvim_set_hl(0, "FloatBorder", { link = "LspFloatBorder" })
 end
 
--- Tabline / mini.tabline: 테마 톤 유지 (색을 새로 지정하지 않고 link)
+-- =========================
+-- Tabline / mini.tabline
+-- =========================
 vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "TabLine",     { link = "Comment" })     -- inactive는 GitHub의 comment 톤
-vim.api.nvim_set_hl(0, "TabLineSel",  { link = "Title" })       -- current는 Title 톤(과하지 않게 강조)
+vim.api.nvim_set_hl(0, "TabLine",     { link = "Comment" })
+vim.api.nvim_set_hl(0, "TabLineSel",  { link = "Title" })
 
-vim.api.nvim_set_hl(0, "MiniTablineFill", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "MiniTablineFill",     { bg = "NONE" })
 vim.api.nvim_set_hl(0, "MiniTablineHidden",  { link = "Comment" })
 vim.api.nvim_set_hl(0, "MiniTablineVisible", { link = "Normal" })
 vim.api.nvim_set_hl(0, "MiniTablineCurrent", { link = "Title" })
 
--- modified는 Diff/Diagnostic 계열을 쓰면 GitHub 톤이 유지됨
 -- =========================
--- mini.tabline: Modified (bg 없음 + bold + GitHub modified 색)
+-- mini.tabline: Modified
 -- =========================
 do
   local okp, palette = pcall(require, "github-theme.palette")
@@ -197,11 +203,12 @@ do
       end
     end
 
-    -- GitHub 톤 유지: 변경(modified)은 보통 orange/yellow 계열이 자연스러움
-    local modified_fg = pick(c.orange) or pick(c.yellow) or pick(c.magenta) or pick(c.blue)
+    local modified_fg =
+      pick(c.orange)
+      or pick(c.yellow)
+      or pick(c.magenta)
+      or pick(c.blue)
 
-    -- "활성 탭과 동일한 스타일"을 위해 Current(Title 링크) 스타일을 존중하되,
-    -- bg는 무조건 NONE, modified는 bold로 강조
     vim.api.nvim_set_hl(0, "MiniTablineModifiedHidden", {
       fg = modified_fg,
       bg = "NONE",
@@ -216,41 +223,66 @@ do
       fg = modified_fg,
       bg = "NONE",
       bold = true,
-      -- 현재 탭을 Title로 링크해두셨으니(보통 bold/강조),
-      -- italic까지 원하면 true, 원치 않으면 이 줄 삭제
       italic = true,
     })
   else
-    -- 팔레트 로드 실패 시에도 배경이 생기지 않게 최소 안전 처리
     vim.api.nvim_set_hl(0, "MiniTablineModifiedHidden",  { bg = "NONE", bold = true })
     vim.api.nvim_set_hl(0, "MiniTablineModifiedVisible", { bg = "NONE", bold = true })
     vim.api.nvim_set_hl(0, "MiniTablineModifiedCurrent", { bg = "NONE", bold = true })
   end
 end
 
--- Treesitter: Python import 구분은 "색을 직접 찍지 말고" GitHub 기본 그룹을 재사용
--- import 키워드: PreProc 대신 Keyword 쪽으로 빼서 대비를 주되, 색은 테마가 정한 Keyword 사용
+-- =========================
+-- Treesitter (GitHub tone reuse)
+-- =========================
 vim.api.nvim_set_hl(0, "@keyword.import.python", { link = "Keyword" })
 vim.api.nvim_set_hl(0, "@keyword.import",        { link = "Keyword" })
 
--- module path: PreProc 대신 Identifier/Include 중 하나로(테마 톤 유지 목적)
 vim.api.nvim_set_hl(0, "@module.python", { link = "Identifier" })
 vim.api.nvim_set_hl(0, "@module",        { link = "Identifier" })
 
--- function keyword: GitHub 톤 유지하며 구분
 vim.api.nvim_set_hl(0, "@keyword.function.python", { link = "Statement" })
 vim.api.nvim_set_hl(0, "@keyword.function",        { link = "Statement" })
 
 -- =========================
--- Statusline transparency (fix lualine bg band)
+-- Statusline / UI transparency
 -- =========================
 vim.api.nvim_set_hl(0, "StatusLine",   { bg = "NONE" })
 vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
 
--- (선택) 커맨드라인/메시지 영역도 투명 톤 유지하고 싶으면
-vim.api.nvim_set_hl(0, "MsgArea",   { bg = "NONE" })
+vim.api.nvim_set_hl(0, "MsgArea",      { bg = "NONE" })
 vim.api.nvim_set_hl(0, "MsgSeparator", { bg = "NONE" })
-
--- (선택) split 경계선도 배경색 끼는 경우가 있어 함께 정리
 vim.api.nvim_set_hl(0, "WinSeparator", { bg = "NONE" })
 
+-- =========================
+-- nvim-notify (WARNING FIX)
+-- =========================
+do
+  local okp, palette = pcall(require, "github-theme.palette")
+  local bg = "#0d1117" -- GitHub dark default fallback
+
+  if okp then
+    local c = palette.load(vim.g.colors_name)
+
+    local function pick(v)
+      if type(v) == "string" then return v end
+      if type(v) == "table" then return v.base or v.fg or v[1] end
+    end
+
+    bg = pick(c.bg0) or pick(c.bg) or pick(c.black) or bg
+  end
+
+  -- 기준 배경색 (NONE 금지)
+  vim.api.nvim_set_hl(0, "NotifyBackground", { bg = bg })
+
+  -- 시각적 투명도 유지
+  vim.api.nvim_set_hl(0, "NotifyINFOBody",  { link = "NotifyBackground", blend = 15 })
+  vim.api.nvim_set_hl(0, "NotifyWARNBody",  { link = "NotifyBackground", blend = 15 })
+  vim.api.nvim_set_hl(0, "NotifyERRORBody", { link = "NotifyBackground", blend = 15 })
+  vim.api.nvim_set_hl(0, "NotifyDEBUGBody", { link = "NotifyBackground", blend = 15 })
+  vim.api.nvim_set_hl(0, "NotifyTRACEBody", { link = "NotifyBackground", blend = 15 })
+
+  require("notify").setup({
+    background_colour = "NotifyBackground",
+  })
+end
