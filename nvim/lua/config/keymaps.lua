@@ -83,8 +83,8 @@ map({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, { desc = "LSP: Code act
 map("n", "<leader>d", vim.diagnostic.open_float, { desc = "Diagnostics: line float" })
 map("n", "<leader>dd", vim.diagnostic.setloclist, { desc = "Diagnostics: document list" })
 map("n", "<leader>dD", vim.diagnostic.setqflist, { desc = "Diagnostics: workspace list" })
-map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Diagnostics: prev" })
-map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Diagnostics: next" })
+map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Diagnostics: prev", nowait = true})
+map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Diagnostics: next", nowait = true })
 
 -- ------------------------------------------------------------
 -- Terminal (toggleterm) / terminal UX

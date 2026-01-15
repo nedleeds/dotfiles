@@ -137,152 +137,155 @@ github.setup({
 vim.cmd.colorscheme("github_dark_default")
 
 -- =========================
+-- Helpers
+-- =========================
+local set = function(group, spec)
+  vim.api.nvim_set_hl(0, group, spec)
+end
+
+local link = function(from, to)
+  set(from, { link = to })
+end
+
+local function make_palette()
+  local okp, palette = pcall(require, "github-theme.palette")
+  if not okp then
+    return nil
+  end
+
+  local colors = palette.load(vim.g.colors_name)
+
+  local function pick(v)
+    if type(v) == "string" or type(v) == "number" then
+      return v
+    end
+    if type(v) == "table" then
+      return v.base or v.fg or v[1]
+    end
+    return nil
+  end
+
+  return {
+    c = colors,
+    pick = pick,
+  }
+end
+
+local P = make_palette()
+
+-- =========================
 -- Base transparency
 -- =========================
-vim.api.nvim_set_hl(0, "Normal",      { bg = "NONE" })
-vim.api.nvim_set_hl(0, "NormalNC",    { bg = "NONE" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+set("Normal",      { bg = "NONE" })
+set("NormalNC",    { bg = "NONE" })
+set("NormalFloat", { bg = "NONE" })
 
 -- =========================
 -- ToggleTerm transparency
 -- =========================
-vim.api.nvim_set_hl(0, "ToggleTerm",            { bg = "NONE" })
-vim.api.nvim_set_hl(0, "ToggleTermNormal",      { bg = "NONE" })
-vim.api.nvim_set_hl(0, "ToggleTermNormalFloat", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "ToggleTermBorder",      { bg = "NONE" })
+set("ToggleTerm",            { bg = "NONE" })
+set("ToggleTermNormal",      { bg = "NONE" })
+set("ToggleTermNormalFloat", { bg = "NONE" })
+set("ToggleTermBorder",      { bg = "NONE" })
 
 -- =========================
--- LSP Float Border (GitHub tone)
+-- Float borders (LSP/Diagnostics)
+--   - 하나의 색으로 통일해서 충돌/재링크 이슈 제거
 -- =========================
 do
-  local okp, palette = pcall(require, "github-theme.palette")
-  if okp then
-    local c = palette.load(vim.g.colors_name)
-
-    local function pick(v)
-      if type(v) == "string" then return v end
-      if type(v) == "table" then return v.base or v.fg or v[1] end
-    end
-
-    local blue = pick(c.blue)
-
-    vim.api.nvim_set_hl(0, "LspFloatBorder", {
-      fg = blue,
-      bg = "NONE",
-    })
-    vim.api.nvim_set_hl(0, "FloatBorder", { link = "LspFloatBorder" })
+  local border = "#58a6ff" -- fallback
+  local black = "#000000"
+  if P then
+    border = P.pick(P.c.blue) or border
+    black = P.pick(P.c.black) or black
   end
+
+  set("FloatBorder", { fg = border, bg =black })
+  link("LspFloatBorder", "FloatBorder")
+  link("DiagnosticFloatBorder", "FloatBorder")
 end
 
 -- =========================
 -- Tabline / mini.tabline
 -- =========================
-vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "TabLine",     { link = "Comment" })
-vim.api.nvim_set_hl(0, "TabLineSel",  { link = "Title" })
+set("TabLineFill", { bg = "NONE" })
+link("TabLine", "Comment")
+link("TabLineSel", "Title")
 
-vim.api.nvim_set_hl(0, "MiniTablineFill",     { bg = "NONE" })
-vim.api.nvim_set_hl(0, "MiniTablineHidden",  { link = "Comment" })
-vim.api.nvim_set_hl(0, "MiniTablineVisible", { link = "Normal" })
-vim.api.nvim_set_hl(0, "MiniTablineCurrent", { link = "Title" })
+set("MiniTablineFill", { bg = "NONE" })
+link("MiniTablineHidden", "Comment")
+link("MiniTablineVisible", "Normal")
+link("MiniTablineCurrent", "Title")
 
--- =========================
 -- mini.tabline: Modified
--- =========================
 do
-  local okp, palette = pcall(require, "github-theme.palette")
-  if okp then
-    local c = palette.load(vim.g.colors_name)
+  local modified_fg
+  if P then
+    modified_fg =
+      P.pick(P.c.orange)
+      or P.pick(P.c.yellow)
+      or P.pick(P.c.magenta)
+      or P.pick(P.c.blue)
+  end
 
-    local function pick(v)
-      if type(v) == "string" or type(v) == "number" then
-        return v
-      end
-      if type(v) == "table" then
-        return v.base or v.fg or v[1]
-      end
-    end
-
-    local modified_fg =
-      pick(c.orange)
-      or pick(c.yellow)
-      or pick(c.magenta)
-      or pick(c.blue)
-
-    vim.api.nvim_set_hl(0, "MiniTablineModifiedHidden", {
-      fg = modified_fg,
-      bg = "NONE",
-      bold = true,
-    })
-    vim.api.nvim_set_hl(0, "MiniTablineModifiedVisible", {
-      fg = modified_fg,
-      bg = "NONE",
-      bold = true,
-    })
-    vim.api.nvim_set_hl(0, "MiniTablineModifiedCurrent", {
-      fg = modified_fg,
-      bg = "NONE",
-      bold = true,
-      italic = true,
-    })
+  if modified_fg then
+    set("MiniTablineModifiedHidden",  { fg = modified_fg, bg = "NONE", bold = true })
+    set("MiniTablineModifiedVisible", { fg = modified_fg, bg = "NONE", bold = true })
+    set("MiniTablineModifiedCurrent", { fg = modified_fg, bg = "NONE", bold = true, italic = true })
   else
-    vim.api.nvim_set_hl(0, "MiniTablineModifiedHidden",  { bg = "NONE", bold = true })
-    vim.api.nvim_set_hl(0, "MiniTablineModifiedVisible", { bg = "NONE", bold = true })
-    vim.api.nvim_set_hl(0, "MiniTablineModifiedCurrent", { bg = "NONE", bold = true })
+    set("MiniTablineModifiedHidden",  { bg = "NONE", bold = true })
+    set("MiniTablineModifiedVisible", { bg = "NONE", bold = true })
+    set("MiniTablineModifiedCurrent", { bg = "NONE", bold = true })
   end
 end
 
 -- =========================
--- Treesitter (GitHub tone reuse)
+-- Treesitter links
 -- =========================
-vim.api.nvim_set_hl(0, "@keyword.import.python", { link = "Keyword" })
-vim.api.nvim_set_hl(0, "@keyword.import",        { link = "Keyword" })
+link("@keyword.import.python", "Keyword")
+link("@keyword.import",        "Keyword")
 
-vim.api.nvim_set_hl(0, "@module.python", { link = "Identifier" })
-vim.api.nvim_set_hl(0, "@module",        { link = "Identifier" })
+link("@module.python", "Identifier")
+link("@module",        "Identifier")
 
-vim.api.nvim_set_hl(0, "@keyword.function.python", { link = "Statement" })
-vim.api.nvim_set_hl(0, "@keyword.function",        { link = "Statement" })
+link("@keyword.function.python", "Statement")
+link("@keyword.function",        "Statement")
 
 -- =========================
 -- Statusline / UI transparency
 -- =========================
-vim.api.nvim_set_hl(0, "StatusLine",   { bg = "NONE" })
-vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
+set("StatusLine",   { bg = "NONE" })
+set("StatusLineNC", { bg = "NONE" })
 
-vim.api.nvim_set_hl(0, "MsgArea",      { bg = "NONE" })
-vim.api.nvim_set_hl(0, "MsgSeparator", { bg = "NONE" })
-vim.api.nvim_set_hl(0, "WinSeparator", { bg = "NONE" })
+set("MsgArea",      { bg = "NONE" })
+set("MsgSeparator", { bg = "NONE" })
+set("WinSeparator", { bg = "NONE" })
 
 -- =========================
 -- nvim-notify (WARNING FIX)
 -- =========================
 do
-  local okp, palette = pcall(require, "github-theme.palette")
+  local ok_notify, notify = pcall(require, "notify")
+
   local bg = "#0d1117" -- GitHub dark default fallback
-
-  if okp then
-    local c = palette.load(vim.g.colors_name)
-
-    local function pick(v)
-      if type(v) == "string" then return v end
-      if type(v) == "table" then return v.base or v.fg or v[1] end
-    end
-
-    bg = pick(c.bg0) or pick(c.bg) or pick(c.black) or bg
+  if P then
+    bg = P.pick(P.c.bg0) or P.pick(P.c.bg) or P.pick(P.c.black) or bg
   end
 
-  -- 기준 배경색 (NONE 금지)
-  vim.api.nvim_set_hl(0, "NotifyBackground", { bg = bg })
+  -- notify는 배경을 NONE로 두면 경고/에러가 보기 안 좋아지는 경우가 있어 고정 bg 사용
+  set("NotifyBackground", { bg = bg })
 
-  -- 시각적 투명도 유지
-  vim.api.nvim_set_hl(0, "NotifyINFOBody",  { link = "NotifyBackground", blend = 15 })
-  vim.api.nvim_set_hl(0, "NotifyWARNBody",  { link = "NotifyBackground", blend = 15 })
-  vim.api.nvim_set_hl(0, "NotifyERRORBody", { link = "NotifyBackground", blend = 15 })
-  vim.api.nvim_set_hl(0, "NotifyDEBUGBody", { link = "NotifyBackground", blend = 15 })
-  vim.api.nvim_set_hl(0, "NotifyTRACEBody", { link = "NotifyBackground", blend = 15 })
+  -- 반투명 느낌(터미널 투명 + notify 가독성 타협)
+  link("NotifyINFOBody",  "NotifyBackground");  set("NotifyINFOBody",  { blend = 15 })
+  link("NotifyWARNBody",  "NotifyBackground");  set("NotifyWARNBody",  { blend = 15 })
+  link("NotifyERRORBody", "NotifyBackground");  set("NotifyERRORBody", { blend = 15 })
+  link("NotifyDEBUGBody", "NotifyBackground");  set("NotifyDEBUGBody", { blend = 15 })
+  link("NotifyTRACEBody", "NotifyBackground");  set("NotifyTRACEBody", { blend = 15 })
 
-  require("notify").setup({
-    background_colour = "NotifyBackground",
-  })
+  if ok_notify then
+    notify.setup({
+      background_colour = "NotifyBackground",
+    })
+  end
 end
+

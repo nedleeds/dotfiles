@@ -162,12 +162,7 @@ vim.api.nvim_create_autocmd("FileType", {
     local ccdir = CLANG.compile_commands_dir(root)
 
     local cmd = {
-      "C:\\Program Files\\LLVM\\bin\\clangd.exe",
-      "--background-index",
-      "--clang-tidy",
-      "--completion-style=detailed",
-      "--header-insertion=iwyu",
-      "--fallback-style=llvm",
+      "C:\\Program Files\\LLVM\\bin\\clangd.exe.bat",
     }
 
     if ccdir then

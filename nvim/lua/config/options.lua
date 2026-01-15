@@ -1,7 +1,13 @@
--- Encoding
-vim.opt.encoding = "utf-8"
+﻿vim.opt.encoding = "utf-8"
+vim.opt.fileencodings = {
+  "utf-8",
+  "cp949",
+  "euc-kr",
+  "latin1",
+}
 vim.opt.fileencoding = "utf-8"
-vim.opt.fileencodings = { "utf-8", "cp949", "euc-kr", "default", "latin1" }
+vim.opt.bomb = true
+
 
 -- UI / editor
 vim.opt.number = true
