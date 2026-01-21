@@ -11,12 +11,20 @@ end)
 vim.g.clipboard = {
   name = "powershell-clipboard",
   copy = {
-    ["+"] = { "powershell.exe", "-NoProfile", "-Command", "Set-Clipboard -Value ([Console]::In.ReadToEnd())" },
-    ["*"] = { "powershell.exe", "-NoProfile", "-Command", "Set-Clipboard -Value ([Console]::In.ReadToEnd())" },
+    ["+"] = { "powershell.exe", "-NoProfile", "-Command",
+      "[Console]::InputEncoding=[Text.UTF8Encoding]::UTF8; $t=[Console]::In.ReadToEnd(); Set-Clipboard -Value $t"
+    },
+    ["*"] = { "powershell.exe", "-NoProfile", "-Command",
+      "[Console]::InputEncoding=[Text.UTF8Encoding]::UTF8; $t=[Console]::In.ReadToEnd(); Set-Clipboard -Value $t"
+    },
   },
   paste = {
-    ["+"] = { "powershell.exe", "-NoProfile", "-Command", "Get-Clipboard -Raw" },
-    ["*"] = { "powershell.exe", "-NoProfile", "-Command", "Get-Clipboard -Raw" },
+    ["+"] = { "powershell.exe", "-NoProfile", "-Command",
+      "[Console]::OutputEncoding=[Text.UTF8Encoding]::UTF8; $t=Get-Clipboard -Raw; $t=$t -replace \"`r`n\",\"`n\"; $t=$t -replace \"`r\",\"\"; [Console]::Write($t)"
+    },
+    ["*"] = { "powershell.exe", "-NoProfile", "-Command",
+      "[Console]::OutputEncoding=[Text.UTF8Encoding]::UTF8; $t=Get-Clipboard -Raw; $t=$t -replace \"`r`n\",\"`n\"; $t=$t -replace \"`r\",\"\"; [Console]::Write($t)"
+    },
   },
   cache_enabled = 0,
 }

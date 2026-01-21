@@ -176,3 +176,54 @@ vim.api.nvim_create_autocmd("FileType", {
     }, { bufnr = bufnr })
   end,
 })
+
+-- typescript-language-server (tsserver)
+local TS_LS_BIN = pick_cmd({
+  path_join(APPS, "typescript-language-server", "typescript-language-server.cmd"),
+  path_join(APPS, "typescript-language-server", "bin", "typescript-language-server.cmd"),
+}, "typescript-language-server")
+
+-- root detection for JS/TS
+local function js_ts_root_dir(bufnr)
+  local fname = vim.api.nvim_buf_get_name(bufnr)
+  if fname == "" then
+    return vim.fn.getcwd()
+  end
+
+  -- Neovim에 lspconfig가 설치돼있다면 이게 제일 안정적
+  local ok, util = pcall(require, "lspconfig.util")
+  if ok then
+    return util.root_pattern("jsconfig.json", "tsconfig.json", "package.json", ".git")(fname)
+      or vim.fn.getcwd()
+  end
+
+  -- fallback: 현재 작업 디렉토리
+  return vim.fn.getcwd()
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = grp,
+  pattern = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+  callback = function(args)
+    local bufnr = args.buf
+    if U.is_client_attached("tsserver", bufnr) then return end
+
+    local root = js_ts_root_dir(bufnr)
+
+    vim.lsp.start({
+      name = "tsserver",
+      cmd = { TS_LS_BIN, "--stdio" },
+      root_dir = root,
+      capabilities = capabilities,
+      on_attach = function(client, _)
+        -- 포매팅은 prettier/eslint에 맡기는 게 일반적 (원하면 지워도 됨)
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+      end,
+      init_options = {
+        hostInfo = "neovim",
+      },
+    }, { bufnr = bufnr })
+  end,
+})
+
