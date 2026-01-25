@@ -6,7 +6,7 @@ vim.pack.add({
   { src = "https://github.com/nvim-lualine/lualine.nvim" },
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
 
-  { src = "https://github.com/folke/noice.nvim" },
+
   { src = "https://github.com/rcarriga/nvim-notify" },
   { src = "https://github.com/MunifTanjim/nui.nvim" },
 
@@ -15,6 +15,8 @@ vim.pack.add({
   { src = "https://github.com/ibhagwan/fzf-lua" },
 
   { src = "https://github.com/echasnovski/mini.tabline" },
+  { src = "https://github.com/folke/which-key.nvim", version = "main" },
+  { src = "https://github.com/folke/snacks.nvim" },
 
   -- ---------------------------------------------------------
   -- LSP / Treesitter
@@ -31,9 +33,27 @@ vim.pack.add({
   { src = "https://github.com/mfussenegger/nvim-dap-python" },
 
   -- ---------------------------------------------------------
+  -- Completion (nvim-cmp)
+  -- ---------------------------------------------------------
+  { src = "https://github.com/hrsh7th/nvim-cmp" },
+  { src = "https://github.com/hrsh7th/cmp-nvim-lsp" },
+  { src = "https://github.com/hrsh7th/cmp-buffer" },
+  { src = "https://github.com/hrsh7th/cmp-path" },
+
+  { src = "https://github.com/L3MON4D3/LuaSnip" },
+  { src = "https://github.com/saadparwaiz1/cmp_luasnip" },
+
+  -- ---------------------------------------------------------
   -- Git
   -- ---------------------------------------------------------
-  { src = "https://github.com/kdheepak/lazygit.nvim" },
+  { src = "https://github.com/jesseduffield/lazygit" },
+  { src = "https://github.com/tpope/vim-fugitive" },
+  { src = "https://github.com/tpope/vim-rhubarb" },
+
+  -- ---------------------------------------------------------
+  -- opencode
+  -- ---------------------------------------------------------
+  { src = "https://github.com/NickvanDyke/opencode.nvim" },
 
   -- ---------------------------------------------------------
   -- Colorschemes (optional, keep as you like)

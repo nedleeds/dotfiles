@@ -1,6 +1,7 @@
 -- lua/plugins/dev/lsp.lua
 local U = require("config.util")
 local PY = require("config.python")
+local CMP = require("plugins.dev.cmp")
 
 -- lua_ls root / settings (기존 로직 유지)
 local function lua_ls_root_dir(bufnr)
@@ -42,6 +43,7 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "lua",
   callback = function(args)
     local bufnr = args.buf
+
     if U.is_client_attached("lua_ls", bufnr) then return end
 
     vim.lsp.start({
@@ -49,6 +51,7 @@ vim.api.nvim_create_autocmd("FileType", {
       cmd = { "lua-language-server" },
       root_dir = lua_ls_root_dir(bufnr),
       settings = lua_ls_settings_for(bufnr),
+      capabilities = CMP.capabilities,
     }, { bufnr = bufnr })
   end,
 })
@@ -65,6 +68,7 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.lsp.start({
         name = "pyright",
         cmd = { "pyright-langserver", "--stdio" },
+        capabilities = CMP.capabilities,
         root_dir = root,
         settings = {
           python = {
@@ -106,7 +110,6 @@ vim.api.nvim_create_autocmd("FileType", {
 
     local root = CLANG.cpp_root_dir(bufnr)
     local ccdir = CLANG.compile_commands_dir(root)
-
     local cmd = {
       "/opt/homebrew/opt/llvm/bin/clangd",
       "--background-index",
@@ -124,6 +127,7 @@ vim.api.nvim_create_autocmd("FileType", {
       name = "clangd",
       cmd = cmd,
       root_dir = root,
+      capabilities = CMP.capabilities,
     }, { bufnr = bufnr })
   end,
 })
@@ -160,6 +164,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.lsp.start({
       name = "zls",
       cmd = { "zls" },
+      capabilities = CMP.capabilities,
       root_dir = root,
       settings = {
         zls = {
@@ -172,3 +177,46 @@ vim.api.nvim_create_autocmd("FileType", {
     }, { bufnr = bufnr })
   end,
 })
+
+-- TypeScript / JavaScript (tsserver via typescript-language-server)
+local function ts_root_dir(bufnr)
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  local dir = vim.fs.dirname(name) or vim.fn.getcwd()
+
+  -- 프로젝트 루트 마커 (필요시 추가/삭제)
+  local root = vim.fs.root(dir, {
+    "tsconfig.json",
+    "jsconfig.json",
+    "package.json",
+    "deno.json",
+    "deno.jsonc",
+    ".git",
+  })
+
+  return root or dir
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = grp,
+  pattern = {
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact",
+  },
+  callback = function(args)
+    local bufnr = args.buf
+    if U.is_client_attached("tsserver", bufnr) then return end
+
+    local root = ts_root_dir(bufnr)
+
+    vim.lsp.start({
+      name = "tsserver",
+      cmd = { "typescript-language-server", "--stdio" },
+      root_dir = root,
+      capabilities = CMP.capabilities,
+
+    }, { bufnr = bufnr })
+  end,
+})
+

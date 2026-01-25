@@ -136,6 +136,9 @@ github.setup({
 
 vim.cmd.colorscheme("github_dark_default")
 
+-- 커서를 블록으로 설정
+vim.opt.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50"
+
 -- =========================
 -- Minimal overrides (keep GitHub original tone)
 -- =========================
@@ -253,4 +256,62 @@ vim.api.nvim_set_hl(0, "MsgSeparator", { bg = "NONE" })
 
 -- (선택) split 경계선도 배경색 끼는 경우가 있어 함께 정리
 vim.api.nvim_set_hl(0, "WinSeparator", { bg = "NONE" })
+
+-- =========================
+-- Cursor highlighting (subtle, theme-appropriate)
+-- =========================
+do
+  local okp, palette = pcall(require, "github-theme.palette")
+  if okp then
+    local c = palette.load(vim.g.colors_name)
+
+    local function pick(v)
+      if type(v) == "string" or type(v) == "number" then
+        return v
+      end
+      if type(v) == "table" then
+        return v.base or v.fg or v[1]
+      end
+    end
+
+    -- 옅은 투명 회색 커서 색상 (subtle transparent gray)
+    local cursor_bg = "#1a1d23"
+    local cursor_fg = pick(c.bg) or pick(c.bg_dim) or "#0d1117"
+
+    -- CursorLine: 현재 라인 하이라이트 (더 진하게)
+    vim.api.nvim_set_hl(0, "CursorLine", { bg = "#1a1d23" })
+
+    -- CursorColumn: 현재 컬럼 하이라이트 (세로 하이라이팅 끔)
+    vim.api.nvim_set_hl(0, "CursorColumn", { bg = "NONE" })
+
+    -- Cursor: 커서 문자 자체 (블록 커서를 위한 설정)
+    vim.api.nvim_set_hl(0, "Cursor", {
+      bg = "#58a6ff",  -- 블록 커서를 위한 파란색 배경
+      fg = cursor_fg,  -- 문자 색상
+    })
+
+    -- TermCursor: 터미널 커서
+    vim.api.nvim_set_hl(0, "TermCursor", {
+      bg = "#58a6ff",
+      fg = cursor_fg,
+    })
+
+    -- Visual: 선택 영역 (매우 옅은 투명 회색)
+    vim.api.nvim_set_hl(0, "Visual", {
+      bg = "#1a1d23",
+      fg = nil,
+    })
+
+    -- VisualNOS: 비선택 모드에서의 visual
+    vim.api.nvim_set_hl(0, "VisualNOS", { link = "Visual" })
+  else
+    -- 팔레트 로드 실패 시 안전한 기본값 (옅은 회색)
+    vim.api.nvim_set_hl(0, "CursorLine", { bg = "#0f1114" })
+    vim.api.nvim_set_hl(0, "CursorColumn", { link = "CursorLine" })
+    vim.api.nvim_set_hl(0, "Cursor", { bg = "#0d1117", fg = "#1a1d23" })
+    vim.api.nvim_set_hl(0, "TermCursor", { bg = "#1a1d23", fg = "#0d1117" })
+    vim.api.nvim_set_hl(0, "Visual", { bg = "#1a1d23" })
+    vim.api.nvim_set_hl(0, "VisualNOS", { link = "Visual" })
+  end
+end
 

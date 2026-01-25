@@ -1,6 +1,8 @@
 -- init.lua
-require("config.options")
-require("config.keymaps")
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
+require("config.options")
 require("plugins.bootstrap")
 require("plugins.init")
+require("config.keymaps")

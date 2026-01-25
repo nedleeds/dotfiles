@@ -61,7 +61,7 @@ require("lualine").setup({
       { "lsp_status" , separator = { right = "", bg = "NONE" } },
     },
     lualine_x = {
-      { "encoding", "filesize", "fileformat", "filetype", color = { fg = colors.orange } },
+      { require("opencode").statusline, "encoding", "filesize", "fileformat", "filetype", color = { fg = colors.orange } },
     },
     lualine_y = { "progress" },
     lualine_z = {
