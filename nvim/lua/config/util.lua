@@ -1,4 +1,3 @@
--- lua/config/util.lua
 local M = {}
 
 function M.safe_require(mod)

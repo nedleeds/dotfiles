@@ -1,4 +1,3 @@
--- lua/config/clangd.lua
 local M = {}
 
 local function normalize_bufnr(bufnr)

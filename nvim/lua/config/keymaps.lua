@@ -1,5 +1,4 @@
 local base = { noremap = true, silent = true }
-
 local function map(mode, lhs, rhs, desc, extra)
   local o = vim.tbl_extend("force", base, extra or {})
   if desc then o.desc = desc end
@@ -25,58 +24,62 @@ do
   if ok_wk then
     wk.add({
       -- Groups (prefix)
-      { "<leader>b", group = "Buffer",  icon = { icon = "󰓩", hl = "WKIconBuffer" } },
-      { "<leader>d", group = "Debug",   icon = { icon = "󰃤", hl = "WKIconDebug" } },
-      { "<leader>f", group = "Find",    icon = { icon = "", hl = "WKIconFind" } },
-      { "<leader>g", group = "Git",     icon = { icon = "󰊢", hl = "WKIconGit" } },
-      { "<leader>l", group = "LSP",     icon = { icon = "󰒋", hl = "WKIconLSP" } },
-      { "<leader>o", group = "OpenCode",icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>oa", desc = "OpenCode: Ask", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>ox", desc = "OpenCode: Action picker", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>ot", desc = "OpenCode: Toggle panel", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>os", desc = "OpenCode: Add selection", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>ol", desc = "OpenCode: Add line", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>ou", desc = "OpenCode: Scroll up", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>od", desc = "OpenCode: Scroll down", icon = { icon = "󰚩", hl = "WKIconOpenCode" } },
-      { "<leader>w", group = "Window",  icon = { icon = "󰖲", hl = "WKIconWindow" } },
-      { "<leader>s", group = "Session", icon = { icon = "", hl = "WKIconSession" } },
-      { "<leader>n", group = "Notify",  icon = { icon = "󰍼", hl = "WKIconNotify" } },
-      { "<leader>na", desc = "Notify: Show all messages", icon = { icon = "󰍼", hl = "WKIconNotify" } },
-      { "<leader>nc", desc = "Notify: Clear messages", icon = { icon = "󰍼", hl = "WKIconNotify" } },
-      { "<leader>nm", desc = "Notify: Messages in buffer", icon = { icon = "󰍼", hl = "WKIconNotify" } },
+      { "<leader>b", group = "Buffer",  icon = { icon = "󰓩 ", hl = "WKIconBuffer" } },
+      { "<leader>d", group = "Debug",   icon = { icon = "󰃤 ", hl = "WKIconDebug" } },
+      { "<leader>f", group = "Find",    icon = { icon = " ", hl = "WKIconFind" } },
+      { "<leader>g", group = "Git",     icon = { icon = "󰊢 ", hl = "WKIconGit" } },
+      { "<leader>l", group = "LSP",     icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "<leader>o", group = "OpenCode",icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>oa", desc = "Ask", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ox", desc = "Action picker", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ot", desc = "Toggle panel", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>os", desc = "Add selection", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ol", desc = "Add line", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ou", desc = "Scroll up", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>od", desc = "Scroll down", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>w", group = "Window",  icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "<leader>s", group = "Session", icon = { icon = " ", hl = "WKIconSession" } },
+      { "<leader>m", group = "Log Messages", icon = { icon = "󱅫 ", hl = "WKIconNotify" } },
 
       -- Singles (top-level)
-      { "<leader>e", desc = "Explorer",           icon = { icon = "",  hl = "WKIconExplorer" } },
-      { "<leader>q", desc = "Quit",               icon = { icon = "󰗼", hl = "WKIconFile" } },
-      { "<leader>T", desc = "Retab",              icon = { icon = "󰉢", hl = "WKIconFormat" } },
+      { "<leader>e", desc = "Explorer",           icon = { icon = " ",  hl = "WKIconExplorer" } },
+      { "<leader>q", desc = "Quit",               icon = { icon = "󰗼 ", hl = "WKIconFile" } },
+      { "<leader>T", desc = "Retab",              icon = { icon = "󰉢 ", hl = "WKIconFormat" } },
 
       -- Non-leader keymaps (shown with ?)
-      { "<C-[>", desc = "Clear search highlight", icon = { icon = "󰍉", hl = "WKIconSearch" } },
+      { "<C-[>", desc = "Clear search highlight", icon = { icon = "󰍉 ", hl = "WKIconSearch" } },
 
-      { "<C-z>", desc = "Window: Zoom toggle", icon = { icon = "󰖲", hl = "WKIconWindow" } },
-      { "gd", desc = "LSP: Go to definition", icon = { icon = "󰒋", hl = "WKIconLSP" } },
-      { "gD", desc = "LSP: Go to declaration", icon = { icon = "󰒋", hl = "WKIconLSP" } },
-      { "gi", desc = "LSP: Go to implementation", icon = { icon = "󰒋", hl = "WKIconLSP" } },
-      { "gy", desc = "LSP: Go to type definition", icon = { icon = "󰒋", hl = "WKIconLSP" } },
-      { "gr", desc = "LSP: References", icon = { icon = "󰒋", hl = "WKIconLSP" } },
+      { "<C-z>", desc = "Window: Zoom toggle", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "gd", desc = "LSP: Go to definition", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gD", desc = "LSP: Go to declaration", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gi", desc = "LSP: Go to implementation", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gy", desc = "LSP: Go to type definition", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gr", desc = "LSP: References", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
 
-      { "-", desc = "Window: Decrease width", icon = { icon = "󰖲", hl = "WKIconWindow" } },
-      { "=", desc = "Window: Increase width", icon = { icon = "󰖲", hl = "WKIconWindow" } },
-      { "_", desc = "Window: Decrease height", icon = { icon = "󰖲", hl = "WKIconWindow" } },
-      { "+", desc = "Window: Increase height", icon = { icon = "󰖲", hl = "WKIconWindow" } },
-      { "<S-l>", desc = "Buffer: Next", icon = { icon = "󰓩", hl = "WKIconBuffer" } },
-      { "<S-h>", desc = "Buffer: Prev", icon = { icon = "󰓩", hl = "WKIconBuffer" } },
+      { "-", desc = "Window: Decrease width", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "=", desc = "Window: Increase width", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "_", desc = "Window: Decrease height", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "+", desc = "Window: Increase height", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "<S-l>", desc = "Buffer: Next", icon = { icon = "󰓩 ", hl = "WKIconBuffer" } },
+      { "<S-h>", desc = "Buffer: Prev", icon = { icon = "󰓩 ", hl = "WKIconBuffer" } },
 
       -- Help key for non-prefix keymaps
-      { "<leader>?", group = "noPrefix", icon = { icon = "󰋗", hl = "WKIconHelp" } },
-
-      -- IMPORTANT:
-      -- <leader>. 은 which-key.lua의 _G.refresh_ws_wk()가 "동적 상태"로 관리합니다.
-      -- 여기서 등록하면 중복/충돌이 납니다. (삭제)
-      -- { "<leader>.", ... }  <-- 넣지 마세요
+      { "<leader>?", group = "noPrefix", icon = { icon = "󰋗 ", hl = "WKIconHelp" } },
     })
   end
 end
+
+-- ---------------------------------------------------------
+-- Log Messages
+-- <leader>m
+-- ---------------------------------------------------------
+map("n", "<leader>mm", function()
+  require("config.snacks").open_messages_split()
+end, "Log: messages")
+
+map("n", "<leader>ms", function()
+  require("config.snacks").open_snacks_notifications_split()
+end, "Log: snacks history")
 
 -- ---------------------------------------------------------
 -- General / File
@@ -84,35 +87,7 @@ end
 map("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", "Search: Clear highlight")
 map("n", "<leader>w", "<Cmd>w<CR>", "File: Save")
 map("n", "<leader>q", "<Cmd>q<CR>", "File: Quit")
-
 map("n", "<leader>T", "<Cmd>retab<CR>", "Format: Retab")
-
--- ---------------------------------------------------------
--- Notify / Messages
--- ---------------------------------------------------------
-map("n", "<leader>na", function()
-  -- Show all messages including vim.notify logs
-  vim.cmd("messages")
-  vim.notify("Showing all messages and vim.notify logs", vim.log.levels.INFO)
-end, "Notify: Show all messages")
-
-map("n", "<leader>nc", function()
-  -- Clear messages history
-  vim.cmd("messages clear")
-  vim.notify("Messages history cleared", vim.log.levels.INFO)
-end, "Notify: Clear messages")
-
-map("n", "<leader>nm", function()
-  -- Show messages in a new buffer for better viewing
-  local messages = vim.fn.execute("messages")
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(messages, "\n"))
-  vim.api.nvim_buf_set_option(buf, "filetype", "text")
-  vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
-  vim.api.nvim_win_set_buf(0, buf)
-  vim.api.nvim_buf_set_name(buf, "Messages")
-  vim.notify("Messages opened in buffer", vim.log.levels.INFO)
-end, "Notify: Messages in buffer")
 
 -- LSP format (global)
 map("n", "<leader>lf", vim.lsp.buf.format, "LSP: Format")
@@ -146,7 +121,7 @@ end, "Buffer: Close others (keep view)", { silent = true })
 -- ---------------------------------------------------------
 -- Git
 -- ---------------------------------------------------------
-map("n", "<leader>lg", "<Cmd>LazyGit<CR>", "Git: LazyGit")
+map("n", "<leader>gg", "<Cmd>LazyGit<CR>", "Git: LazyGit")
 
 -- Fugitive
 map("n", "<leader>gs", "<Cmd>Git<CR>", "Git: Status (Fugitive)")
@@ -170,7 +145,7 @@ map("n", "gr", vim.lsp.buf.references, "LSP: References")
 map("n", "<leader>lr", vim.lsp.buf.rename, "LSP: Rename")
 map({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, "LSP: Code action")
 
-map("n", "<leader>lD", vim.diagnostic.open_float, "LSP: Line diagnostics")
+-- (keep these as lightweight LSP diagnostics)
 map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "LSP: Prev diagnostic")
 map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "LSP: Next diagnostic")
 
@@ -197,7 +172,7 @@ map("n", "<C-l>", "<C-w>l", "Window: Focus right")
 
 -- Zoom toggle
 map("n", "<C-z>", function()
-  require("plugins.ui.zoom").toggle()
+  require("config.zoom").toggle()
 end, "Window: Zoom toggle")
 
 -- Split
@@ -207,7 +182,6 @@ map("n", "<leader>wd", "<Cmd>close<CR>", "Window: Close current")
 
 -- Resize (NO Ctrl, NO Arrow)
 local resize_step = 5
-
 map("n", "-", function() vim.cmd("vertical resize -" .. resize_step) end, "Window: Decrease width")
 map("n", "=", function() vim.cmd("vertical resize +" .. resize_step) end, "Window: Increase width")
 map("n", "_", function() vim.cmd("resize -" .. resize_step) end, "Window: Decrease height")
@@ -242,6 +216,16 @@ map("n", "<leader>du", with_require("dapui", function(dapui) dapui.toggle() end,
 map("n", "<leader>dr", with_require("dap", function(dap) dap.repl.open() end, "nvim-dap"), "Debug: REPL")
 map("n", "<leader>dq", with_require("dap", function(dap) dap.terminate() end, "nvim-dap"), "Debug: Terminate")
 map("n", "<leader>dR", with_require("dap", function(dap) dap.restart() end, "nvim-dap"), "Debug: Restart")
+
+-- ---------------------------------------------------------
+-- Debug group: Diagnostics (Problems-like)
+-- ---------------------------------------------------------
+map("n", "<leader>dd", "<Cmd>FzfLua diagnostics_workspace<CR>", "Debug: Diagnostics (workspace)")
+map("n", "<leader>df", "<Cmd>FzfLua diagnostics_document<CR>", "Debug: Diagnostics (file)")
+map("n", "<leader>de", vim.diagnostic.open_float, "Debug: Line diagnostics")
+map("n", "<leader>dQ", function()
+  vim.diagnostic.setqflist({ open = true })
+end, "Debug: Diagnostics -> Quickfix")
 
 -- ---------------------------------------------------------
 -- Insert mode PUM navigation
@@ -369,5 +353,15 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- =========================================================
+-- Snacks Terminal Toggle (Ctrl-\)
+-- =========================================================
+map({ "n", "t" }, "<C-\\>", function()
+  local ok, Snacks = pcall(require, "snacks")
+  if ok then
+    Snacks.terminal.toggle()
+  end
+end, "Terminal Toggle")
 
-
+-- Terminal: ESC -> Normal mode (so y/v work)
+vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true, desc = "Terminal: Normal mode" })

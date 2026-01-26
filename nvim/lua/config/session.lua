@@ -1,10 +1,3 @@
--- lua/plugins/ui/session.lua
--- Session manager (mksession) + fzf-lua picker
--- - preview OFF
--- - separate info (not inline)
--- - rename 지원 (Ctrl-R)
--- - 폭(가로 길이) 축소
-
 local M = {}
 
 local session_dir = vim.fn.stdpath("data") .. "/sessions/"
@@ -309,5 +302,5 @@ function M.setup()
   end, {})
 end
 
-M.setup()
+-- M.setup()
 return M
