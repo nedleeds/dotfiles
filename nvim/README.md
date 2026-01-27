@@ -1,6 +1,21 @@
-
 # Requirements
 
+## 0. nvim 설치
+- https://github.com/neovim/neovim/releases
+- Assets 토글버튼 클릭
+- nvim-win64.msi 다운로드
+- 실행
+
+## 0.1 nvim 설정 파일 다운로드 및 적용
+```powershell
+$time=Get-Date -Format "yyyyMMdd-HHmmss"; `
+mv $env:LOCALAPPDATA\nvim "$env:LOCALAPPDATA\nvim-backup-$time" -ea SilentlyContinue; `
+mv $env:LOCALAPPDATA\nvim-data "$env:LOCALAPPDATA\nvim-data-backup-$time" -ea SilentlyContinue; `
+cd $env:TEMP; `
+git clone https://github.com/nedleeds/dotfiles.git; `
+mv "$env:TEMP\dotfiles\windows\nvim" $env:LOCALAPPDATA\; `
+rm "$env:TEMP\dotfiles" -r -fo
+```
 ## 1. fzf
 
 #### 1-1) 사용자 bin 폴더 생성 (없으면 생성)
