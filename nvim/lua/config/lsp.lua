@@ -87,5 +87,4 @@ function M.start(bufnr, spec, opts)
   return vim.lsp.start(spec, opts)
 end
 
-
 return M

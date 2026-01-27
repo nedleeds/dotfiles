@@ -17,12 +17,6 @@ return {
       local grp = U.augroup("lsp_attach")
       vim.g.__lsp_attach_grp = grp
 
-
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-        vim.lsp.handlers.hover,
-        { border = "rounded" }
-      )
-
       -- ---------------------------------------------------------
       -- Lua (lua_ls)
       -- ---------------------------------------------------------

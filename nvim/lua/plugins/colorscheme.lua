@@ -120,24 +120,6 @@ return {
     vim.api.nvim_set_hl(0, "MsgArea",       { bg = "NONE" })
     vim.api.nvim_set_hl(0, "MsgSeparator",  { bg = "NONE" })
     vim.api.nvim_set_hl(0, "WinSeparator",  { bg = "NONE" })
-    vim.api.nvim_set_hl(0, "LspInfoBorder", { link = "LspFloatBorder" })
-
-    do
-      local orig = vim.lsp.util.open_floating_preview
-
-      local border = {
-        { "╭", "FloatBorder" }, { "─", "FloatBorder" }, { "╮", "FloatBorder" },
-        { "│", "FloatBorder" },
-        { "╯", "FloatBorder" }, { "─", "FloatBorder" }, { "╰", "FloatBorder" },
-        { "│", "FloatBorder" },
-      }
-
-      vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
-        opts = opts or {}
-        opts.border = opts.border or border
-        return orig(contents, syntax, opts, ...)
-      end
-    end
 
     -- =========================
     -- Cursor highlighting (subtle, theme-appropriate)
