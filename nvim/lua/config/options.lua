@@ -19,11 +19,16 @@ vim.o.termguicolors = true
 
 -- Hide end-of-buffer "~"
 vim.o.fillchars = "eob: "
-vim.o.shell = "pwsh"
+
+if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+  vim.o.shell = "pwsh"
+  vim.o.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
+  vim.o.shellquote = ""
+  vim.o.shellxquote = ""
+end
 
 if vim.fn.has("unnamedplus") == 1 then
   vim.o.clipboard = "unnamedplus"
 else
   vim.o.clipboard = "unnamed"
 end
-
