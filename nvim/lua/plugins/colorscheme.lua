@@ -4,15 +4,6 @@ return {
   lazy = false,
   priority = 1000,
 
-  opts = {
-    options = {
-      transparent = true,
-      styles = {
-        floats = "transparent",
-      },
-    },
-  },
-
   config = function(_, opts)
     local ok_gh, github = pcall(require, "github-theme")
     if not ok_gh then

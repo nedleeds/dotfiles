@@ -7,6 +7,12 @@ return {
     input = { enabled = true },
     notifier = { enabled = true },
     terminal = { enabled = true, start_insert = true },
+    hover = {
+      enabled = true,
+      border = "rounded",
+      max_width = 80,
+      max_height = 20,
+    },
   },
 
   config = function(_, opts)
