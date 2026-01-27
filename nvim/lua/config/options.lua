@@ -1,46 +1,29 @@
-﻿-- UI / editor
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.signcolumn = "yes"
-vim.opt.splitright = true
-vim.opt.termguicolors = true
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
--- Indent
-vim.opt.expandtab = true
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.softtabstop = 2
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.cursorline = true
+vim.o.cursorcolumn = false
 
--- Files
-vim.opt.swapfile = false
-vim.opt.fillchars = { eob = " " }
+vim.o.expandtab = true
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.softtabstop = 4
 
--- Whitespace visualize
-vim.opt.list = true
-vim.opt.listchars = {
-  tab = ">-",
-  trail = ".",
-  extends = ">",
-  precedes = "<",
-  nbsp = "+"
-}
+vim.o.swapfile = false
+vim.o.signcolumn = "yes"
+vim.o.splitright = true
+vim.o.showtabline = 2
+vim.o.termguicolors = true
 
+-- Hide end-of-buffer "~"
+vim.o.fillchars = "eob: "
+vim.o.shell = "pwsh"
 
--- Clipboard
 if vim.fn.has("unnamedplus") == 1 then
-  vim.opt.clipboard = "unnamedplus"
+  vim.o.clipboard = "unnamedplus"
 else
-  vim.opt.clipboard = "unnamed"
+  vim.o.clipboard = "unnamed"
 end
-
--- Trim trailing whitespace (exclude markdown)
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*",
-  callback = function()
-    if vim.bo.filetype == "markdown" then return end
-    local pos = vim.api.nvim_win_get_cursor(0)
-    vim.cmd([[%s/\s\+$//e]])
-    vim.api.nvim_win_set_cursor(0, pos)
-  end,
-})
 

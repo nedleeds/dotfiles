@@ -1,4 +1,3 @@
--- lua/config/python.lua
 local M = {}
 
 function M.py_root_dir(bufnr)

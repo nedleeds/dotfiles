@@ -1,178 +1,367 @@
--- lua/config/keymaps.lua
-vim.g.mapleader = " "
+local base = { noremap = true, silent = true }
+local function map(mode, lhs, rhs, desc, extra)
+  local o = vim.tbl_extend("force", base, extra or {})
+  if desc then o.desc = desc end
+  vim.keymap.set(mode, lhs, rhs, o)
+end
 
-local map = vim.keymap.set
-local opts = { noremap = true, silent = true }
-
--- ------------------------------------------------------------
--- Core / General
--- ------------------------------------------------------------
-map("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", { desc = "Clear search highlight" })
-
-map("n", "<leader>w", "<Cmd>write<CR>", { desc = "Save file" })
-map("n", "<leader>q", "<Cmd>quit<CR>", { desc = "Quit window" })
-map("n", "<leader>o", "<Cmd>update<CR><Cmd>source %<CR>", { desc = "Source current file" })
-
--- Formatting
-map("n", "<leader>lf", function() vim.lsp.buf.format() end, { desc = "LSP: Format" })
-map("n", "<leader>T", "<Cmd>retab<CR>", { desc = "Retab (fix tabs/spaces)" })
-
--- Toggle whitespace visualization
-map("n", "<leader>.", function()
-  vim.opt.list = not vim.opt.list:get()
-  if vim.opt.list:get() then
-    vim.opt.listchars = { tab = ">>", trail = "." }
+local function with_require(mod, fn, notify_name)
+  return function(...)
+    local ok, m = pcall(require, mod)
+    if not ok then
+      vim.notify((notify_name or mod) .. " is not loaded", vim.log.levels.WARN)
+      return
+    end
+    return fn(m, ...)
   end
-end, { desc = "Toggle whitespace" })
+end
 
--- ------------------------------------------------------------
--- File explorer (Oil)
--- ------------------------------------------------------------
-map("n", "<leader>e", "<Cmd>Oil --float<CR>", { desc = "Explorer: Oil (float)" })
+-- ---------------------------------------------------------
+-- which-key groups + icons (v3 icon table)
+-- ---------------------------------------------------------
+do
+  local ok_wk, wk = pcall(require, "which-key")
+  if ok_wk then
+    wk.add({
+      -- Groups (prefix)
+      { "<leader>b", group = "Buffer",  icon = { icon = "󰓩 ", hl = "WKIconBuffer" } },
+      { "<leader>d", group = "Debug",   icon = { icon = "󰃤 ", hl = "WKIconDebug" } },
+      { "<leader>f", group = "Find",    icon = { icon = " ", hl = "WKIconFind" } },
+      { "<leader>g", group = "Git",     icon = { icon = "󰊢 ", hl = "WKIconGit" } },
+      { "<leader>l", group = "LSP",     icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "<leader>o", group = "OpenCode",icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>oa", desc = "Ask", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ox", desc = "Action picker", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ot", desc = "Toggle panel", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>os", desc = "Add selection", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ol", desc = "Add line", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>ou", desc = "Scroll up", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>od", desc = "Scroll down", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
+      { "<leader>w", group = "Window",  icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "<leader>s", group = "Session", icon = { icon = " ", hl = "WKIconSession" } },
+      { "<leader>m", group = "Log Messages", icon = { icon = "󱅫 ", hl = "WKIconNotify" } },
 
--- ------------------------------------------------------------
+      -- Singles (top-level)
+      { "<leader>e", desc = "Explorer",           icon = { icon = " ",  hl = "WKIconExplorer" } },
+      { "<leader>q", desc = "Quit",               icon = { icon = "󰗼 ", hl = "WKIconFile" } },
+      { "<leader>T", desc = "Retab",              icon = { icon = "󰉢 ", hl = "WKIconFormat" } },
+
+      -- Non-leader keymaps (shown with ?)
+      { "<C-[>", desc = "Clear search highlight", icon = { icon = "󰍉 ", hl = "WKIconSearch" } },
+
+      { "<C-z>", desc = "Window: Zoom toggle", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "gd", desc = "LSP: Go to definition", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gD", desc = "LSP: Go to declaration", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gi", desc = "LSP: Go to implementation", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gy", desc = "LSP: Go to type definition", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+      { "gr", desc = "LSP: References", icon = { icon = "󰒋 ", hl = "WKIconLSP" } },
+
+      { "-", desc = "Window: Decrease width", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "=", desc = "Window: Increase width", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "_", desc = "Window: Decrease height", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "+", desc = "Window: Increase height", icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
+      { "<S-l>", desc = "Buffer: Next", icon = { icon = "󰓩 ", hl = "WKIconBuffer" } },
+      { "<S-h>", desc = "Buffer: Prev", icon = { icon = "󰓩 ", hl = "WKIconBuffer" } },
+
+      -- Help key for non-prefix keymaps
+      { "<leader>?", group = "noPrefix", icon = { icon = "󰋗 ", hl = "WKIconHelp" } },
+    })
+  end
+end
+
+-- ---------------------------------------------------------
+-- Log Messages
+-- <leader>m
+-- ---------------------------------------------------------
+map("n", "<leader>mm", function()
+  require("config.snacks").open_messages_split()
+end, "Log: messages")
+
+map("n", "<leader>ms", function()
+  require("config.snacks").open_snacks_notifications_split()
+end, "Log: snacks history")
+
+-- ---------------------------------------------------------
+-- General / File
+-- ---------------------------------------------------------
+map("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", "Search: Clear highlight")
+map("n", "<leader>w", "<Cmd>w<CR>", "File: Save")
+map("n", "<leader>q", "<Cmd>q<CR>", "File: Quit")
+map("n", "<leader>T", "<Cmd>retab<CR>", "Format: Retab")
+
+-- LSP format (global)
+map("n", "<leader>lf", vim.lsp.buf.format, "LSP: Format")
+
+-- ---------------------------------------------------------
+-- Explorer (Oil)
+-- ---------------------------------------------------------
+map("n", "<leader>e", "<Cmd>Oil --float<CR>", "Explorer: Oil (float)")
+
+-- ---------------------------------------------------------
 -- Find (fzf-lua)
--- NOTE: <leader>f is reserved as a group prefix for which-key.
--- ------------------------------------------------------------
-map("n", "<leader>ff", "<Cmd>FzfLua files<CR>", { desc = "Find files" })
-map("n", "<leader>fb", "<Cmd>FzfLua buffers<CR>", { desc = "Find buffers" })
-map("n", "<leader>fl", "<Cmd>FzfLua blines<CR>", { desc = "Find in current buffer" })
-map("n", "<leader>fg", "<Cmd>FzfLua live_grep<CR>", { desc = "Find by grep" })
+-- ---------------------------------------------------------
+map("n", "<leader>ff", "<Cmd>FzfLua files<CR>", "Find: Files")
+map("n", "<leader>fb", "<Cmd>FzfLua buffers<CR>", "Find: Buffers (fzf-lua)")
+map("n", "<leader>fg", "<Cmd>FzfLua live_grep<CR>", "Find: Live grep")
+map("n", "<leader>fl", "<Cmd>FzfLua blines<CR>", "Find: Buffer lines")
 
--- (쩌짹횇횄) 짹창횁쨍 쩍??째체 ??짱횁철쩔챘: <leader>/ 쨈횂 blines쨌횓 짹횞쨈챘쨌횓 쨉횘
-map("n", "<leader>/", "<Cmd>FzfLua blines<CR>", { desc = "Find in current buffer" })
+-- ---------------------------------------------------------
+-- Buffer
+-- ---------------------------------------------------------
+map("n", "<S-l>", "<Cmd>bnext<CR>", "Buffer: Next")
+map("n", "<S-h>", "<Cmd>bprevious<CR>", "Buffer: Prev")
+map("n", "<leader>bd", "<Cmd>bdelete<CR>", "Buffer: Delete")
 
--- ------------------------------------------------------------
--- Buffers
--- ------------------------------------------------------------
-map("n", "<S-l>", "<Cmd>bnext<CR>", { desc = "Next buffer" })
-map("n", "<S-h>", "<Cmd>bprevious<CR>", { desc = "Prev buffer" })
-
-map("n", "<leader>bd", "<Cmd>bdelete<CR>", { desc = "Buffer: delete" })
 map("n", "<leader>bo", function()
   local v = vim.fn.winsaveview()
   vim.cmd("silent! %bd | e# | bd#")
   vim.fn.winrestview(v)
-end, { silent = true, desc = "Buffer: close others (keep view)" })
+end, "Buffer: Close others (keep view)", { silent = true })
 
--- ------------------------------------------------------------
+-- ---------------------------------------------------------
 -- Git
--- ------------------------------------------------------------
-map("n", "<leader>gg", "<Cmd>LazyGit<CR>", { desc = "Git: LazyGit" })
+-- ---------------------------------------------------------
+map("n", "<leader>gg", "<Cmd>LazyGit<CR>", "Git: LazyGit")
 
--- ------------------------------------------------------------
--- Noice
--- ------------------------------------------------------------
-map("n", "<leader>un", "<Cmd>NoiceAll<CR>", { desc = "UI: Noice history" })
+-- Fugitive
+map("n", "<leader>gs", "<Cmd>Git<CR>", "Git: Status (Fugitive)")
+map("n", "<leader>gd", "<Cmd>Gdiffsplit<CR>", "Git: Diff (split)")
+map("n", "<leader>gb", "<Cmd>Git blame<CR>", "Git: Blame")
+map("n", "<leader>gl", "<Cmd>Gclog<CR>", "Git: Log (quickfix)")
+map("n", "<leader>gL", "<Cmd>0Gclog<CR>", "Git: Log (this file)")
+map("n", "<leader>gp", "<Cmd>Git push<CR>", "Git: Push")
+map("n", "<leader>gP", "<Cmd>Git pull<CR>", "Git: Pull")
+map("n", "<leader>go", "<Cmd>GBrowse<CR>", "Git: Open on remote") -- rhubarb 필요
 
--- ------------------------------------------------------------
--- LSP (non-leader go-to keys)
--- ------------------------------------------------------------
-map("n", "gd", vim.lsp.buf.definition, { desc = "LSP: Definition" })
-map("n", "gD", vim.lsp.buf.declaration, { desc = "LSP: Declaration" })
-map("n", "gi", vim.lsp.buf.implementation, { desc = "LSP: Implementation" })
-map("n", "gy", vim.lsp.buf.type_definition, { desc = "LSP: Type definition" })
-map("n", "gr", vim.lsp.buf.references, { desc = "LSP: References" })
+-- ---------------------------------------------------------
+-- LSP navigation / actions
+-- ---------------------------------------------------------
+map("n", "gd", vim.lsp.buf.definition, "LSP: Go to definition")
+map("n", "gD", vim.lsp.buf.declaration, "LSP: Go to declaration")
+map("n", "gi", vim.lsp.buf.implementation, "LSP: Go to implementation")
+map("n", "gy", vim.lsp.buf.type_definition, "LSP: Go to type definition")
+map("n", "gr", vim.lsp.buf.references, "LSP: References")
 
--- LSP actions (leader)
-map("n", "<leader>lr", vim.lsp.buf.rename, { desc = "LSP: Rename" })
-map({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, { desc = "LSP: Code action" })
+map("n", "<leader>lr", vim.lsp.buf.rename, "LSP: Rename")
+map({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, "LSP: Code action")
 
--- Diagnostics
--- ?쟾泥?/?썙?겕?뒪?럹?씠?뒪 diagnostics
-map("n", "<leader>d", vim.diagnostic.open_float, { desc = "Diagnostics: line float" })
-map("n", "<leader>dd", vim.diagnostic.setloclist, { desc = "Diagnostics: document list" })
-map("n", "<leader>dD", vim.diagnostic.setqflist, { desc = "Diagnostics: workspace list" })
-map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Diagnostics: prev", nowait = true})
-map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Diagnostics: next", nowait = true })
+-- (keep these as lightweight LSP diagnostics)
+map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "LSP: Prev diagnostic")
+map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "LSP: Next diagnostic")
 
--- ------------------------------------------------------------
--- Terminal (toggleterm) / terminal UX
--- ------------------------------------------------------------
-map("t", "<C-[>", [[<C-\><C-n>]], { desc = "Terminal: normal mode" })
+-- ---------------------------------------------------------
+-- Terminal behavior
+-- ---------------------------------------------------------
+map("t", "<C-[>", [[<C-\><C-n>]], "Terminal: Normal mode")
 
--- terminal buffer쩔징쩌짯쨍쨍 i째징 startinsert쨌횓 쨉쩔??횤횉횕쨉쨉쨌횕 (짹횞 쩔횥쩔징쨈횂 ??횕쨔횦 i)
 map("n", "i", function()
   if vim.bo.buftype == "terminal" then
     vim.cmd("startinsert")
   else
     return "i"
   end
-end, { expr = true, desc = "Terminal: enter insert" })
+end, "Terminal: Insert (if terminal)", { expr = true })
 
--- ------------------------------------------------------------
--- Window movement / layout
--- ------------------------------------------------------------
-map("n", "<C-h>", "<C-w>h", { desc = "Window: left" })
-map("n", "<BS>",  "<C-w>h", { desc = "Window: left (Backspace)" })
-map("n", "<C-j>", "<C-w>j", { desc = "Window: down" })
-map("n", "<C-k>", "<C-w>k", { desc = "Window: up" })
-map("n", "<C-l>", "<C-w>l", { desc = "Window: right" })
+-- ---------------------------------------------------------
+-- Window navigation
+-- ---------------------------------------------------------
+map("n", "<C-h>", "<C-w>h", "Window: Focus left")
+map("n", "<C-j>", "<C-w>j", "Window: Focus down")
+map("n", "<C-k>", "<C-w>k", "Window: Focus up")
+map("n", "<C-l>", "<C-w>l", "Window: Focus right")
 
+-- Zoom toggle
 map("n", "<C-z>", function()
-  require("plugins.ui.zoom").toggle()
-end, { desc = "Window: zoom toggle" })
+  require("config.zoom").toggle()
+end, "Window: Zoom toggle")
 
-map("n", "<leader>ws", "<C-w>s", { desc = "Window: split horizontal" })
-map("n", "<leader>wv", "<C-w>v", { desc = "Window: split vertical" })
-map("n", "<leader>wd", "<Cmd>close<CR>", { desc = "Window: close" })
+-- Split
+map("n", "<leader>ws", "<C-w>s", "Window: Split horizontal")
+map("n", "<leader>wv", "<C-w>v", "Window: Split vertical")
+map("n", "<leader>wd", "<Cmd>close<CR>", "Window: Close current")
 
--- Resize (no Ctrl, no arrow)
+-- Resize (NO Ctrl, NO Arrow)
 local resize_step = 5
-map("n", "-", function() vim.cmd("vertical resize -" .. resize_step) end, { desc = "Window: width -" })
-map("n", "=", function() vim.cmd("vertical resize +" .. resize_step) end, { desc = "Window: width +" })
-map("n", "_", function() vim.cmd("resize -" .. resize_step) end, { desc = "Window: height -" })
-map("n", "+", function() vim.cmd("resize +" .. resize_step) end, { desc = "Window: height +" })
+map("n", "-", function() vim.cmd("vertical resize -" .. resize_step) end, "Window: Decrease width")
+map("n", "=", function() vim.cmd("vertical resize +" .. resize_step) end, "Window: Increase width")
+map("n", "_", function() vim.cmd("resize -" .. resize_step) end, "Window: Decrease height")
+map("n", "+", function() vim.cmd("resize +" .. resize_step) end, "Window: Increase height")
 
--- ------------------------------------------------------------
--- DAP (<leader>d*)
--- ------------------------------------------------------------
-map("n", "<leader>Dc", function() require("dap").continue() end, { desc = "DAP: Continue" })
-map("n", "<leader>Do", function() require("dap").step_over() end, { desc = "DAP: Step over" })
-map("n", "<leader>Di", function() require("dap").step_into() end, { desc = "DAP: Step into" })
-map("n", "<leader>DO", function() require("dap").step_out() end, { desc = "DAP: Step out" })
+-- ---------------------------------------------------------
+-- DAP
+-- ---------------------------------------------------------
+map("n", "<leader>dc", with_require("dap", function(dap) dap.continue() end, "nvim-dap"), "Debug: Continue")
+map("n", "<leader>do", with_require("dap", function(dap) dap.step_over() end, "nvim-dap"), "Debug: Step over")
+map("n", "<leader>di", with_require("dap", function(dap) dap.step_into() end, "nvim-dap"), "Debug: Step into")
+map("n", "<leader>dO", with_require("dap", function(dap) dap.step_out() end, "nvim-dap"), "Debug: Step out")
 
-map("n", "<leader>Db", function() require("dap").toggle_breakpoint() end, { desc = "DAP: Toggle breakpoint" })
-map("n", "<leader>DB", function()
+map("n", "<leader>db", with_require("dap", function(dap) dap.toggle_breakpoint() end, "nvim-dap"), "Debug: Toggle breakpoint")
+
+map("n", "<leader>dB", function()
+  local ok, dap = pcall(require, "dap")
+  if not ok then
+    vim.notify("nvim-dap is not loaded", vim.log.levels.WARN)
+    return
+  end
+
   local cond = vim.fn.input("Breakpoint condition: ")
   if cond == nil or cond == "" then
-    require("dap").toggle_breakpoint()
+    dap.toggle_breakpoint()
   else
-    require("dap").set_breakpoint(cond)
+    dap.set_breakpoint(cond)
   end
-end, { desc = "DAP: Conditional breakpoint" })
+end, "Debug: Conditional breakpoint")
 
-map("n", "<leader>Du", function() require("dapui").toggle() end, { desc = "DAP-UI: Toggle" })
-map("n", "<leader>Dr", function() require("dap").repl.open() end, { desc = "DAP: REPL" })
-map("n", "<leader>Dq", function() require("dap").terminate() end, { desc = "DAP: Terminate" })
-map("n", "<leader>DR", function() require("dap").restart() end, { desc = "DAP: Restart" })
+map("n", "<leader>du", with_require("dapui", function(dapui) dapui.toggle() end, "nvim-dap-ui"), "Debug: Toggle UI")
+map("n", "<leader>dr", with_require("dap", function(dap) dap.repl.open() end, "nvim-dap"), "Debug: REPL")
+map("n", "<leader>dq", with_require("dap", function(dap) dap.terminate() end, "nvim-dap"), "Debug: Terminate")
+map("n", "<leader>dR", with_require("dap", function(dap) dap.restart() end, "nvim-dap"), "Debug: Restart")
 
--- ------------------------------------------------------------
--- Insert-mode completion menu navigation
--- ------------------------------------------------------------
+-- ---------------------------------------------------------
+-- Debug group: Diagnostics (Problems-like)
+-- ---------------------------------------------------------
+map("n", "<leader>dd", "<Cmd>FzfLua diagnostics_workspace<CR>", "Debug: Diagnostics (workspace)")
+map("n", "<leader>df", "<Cmd>FzfLua diagnostics_document<CR>", "Debug: Diagnostics (file)")
+map("n", "<leader>de", vim.diagnostic.open_float, "Debug: Line diagnostics")
+map("n", "<leader>dQ", function()
+  vim.diagnostic.setqflist({ open = true })
+end, "Debug: Diagnostics -> Quickfix")
+
+-- ---------------------------------------------------------
+-- Insert mode PUM navigation
+-- ---------------------------------------------------------
 map("i", "<C-j>", function()
-  if vim.fn.pumvisible() == 1 then return "<C-n>" end
+  if vim.fn.pumvisible() == 1 then
+    return "<C-n>"
+  end
   return "<C-j>"
-end, { expr = true, noremap = true, desc = "PUM: next item" })
+end, "PUM: Next", { expr = true })
 
 map("i", "<C-k>", function()
-  if vim.fn.pumvisible() == 1 then return "<C-p>" end
+  if vim.fn.pumvisible() == 1 then
+    return "<C-p>"
+  end
   return "<C-k>"
-end, { expr = true, noremap = true, desc = "PUM: prev item" })
+end, "PUM: Prev", { expr = true })
 
--- ------------------------------------------------------------
--- Save-time whitespace trim (fixes your missing 'group' var)
--- ------------------------------------------------------------
-local trim_grp = vim.api.nvim_create_augroup("trim_trailing_whitespace", { clear = true })
-vim.api.nvim_create_autocmd("BufWritePre", {
-  group = trim_grp,
-  pattern = "*",
-  callback = function()
-    local view = vim.fn.winsaveview()
-    vim.cmd([[silent! %s/\s\+$//e]])
-    vim.fn.winrestview(view)
+-- ---------------------------------------------------------
+-- Whitespace cleanup on save
+-- ---------------------------------------------------------
+do
+  local grp = vim.api.nvim_create_augroup("DHLTrimWhitespace", { clear = true })
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    group = grp,
+    pattern = "*",
+    callback = function()
+      local view = vim.fn.winsaveview()
+      vim.cmd([[silent! %s/\s\+$//e]])
+      vim.fn.winrestview(view)
+    end,
+  })
+end
+
+-- Toggle whitespace display
+map("n", "<leader>.", function()
+  _G.toggle_whitespace()
+end, "UI: Whitespace")
+
+-- ---------------------------------------------------------
+-- OpenCode (opencode.nvim) - safe lazy require
+-- ---------------------------------------------------------
+local function with_opencode(fn)
+  return function(...)
+    local ok, oc = pcall(require, "opencode")
+    if not ok then
+      vim.notify("opencode.nvim is not loaded", vim.log.levels.WARN)
+      return
+    end
+    return fn(oc, ...)
+  end
+end
+
+map({ "n", "x" }, "<leader>oa", with_opencode(function(oc)
+  oc.ask("@this: ", { submit = true })
+end), "OpenCode: Ask")
+
+map({ "n", "x" }, "<leader>ox", with_opencode(function(oc)
+  oc.select()
+end), "OpenCode: Action picker")
+
+map({ "n", "t" }, "<leader>ot", with_opencode(function(oc)
+  oc.toggle()
+end), "OpenCode: Toggle panel")
+
+map({ "n", "x" }, "<leader>os", with_opencode(function(oc)
+  return oc.operator("@this ")
+end), "OpenCode: Add selection", { expr = true })
+
+map("n", "<leader>ol", with_opencode(function(oc)
+  return oc.operator("@this ") .. "_"
+end), "OpenCode: Add line", { expr = true })
+
+map("n", "<leader>ou", with_opencode(function(oc)
+  oc.command("session.half.page.up")
+end), "OpenCode: Scroll up")
+
+map("n", "<leader>od", with_opencode(function(oc)
+  oc.command("session.half.page.down")
+end), "OpenCode: Scroll down")
+
+-- ---------------------------------------------------------
+-- Oil buffer-local keymaps (moved from oil.setup.keymaps)
+-- ---------------------------------------------------------
+local function set_oil_keymaps(bufnr)
+  local function bmap(mode, lhs, rhs, desc, extra)
+    local o = vim.tbl_extend("force", base, { buffer = bufnr }, extra or {})
+    o.desc = desc
+    vim.keymap.set(mode, lhs, rhs, o)
+  end
+
+  local ok_actions, actions = pcall(require, "oil.actions")
+  if not ok_actions then
+    return
+  end
+
+  bmap("n", "g?", actions.show_help.callback, "Oil: Help")
+
+  bmap("n", "<CR>", actions.select.callback, "Oil: Select")
+  bmap("n", "<C-s>", function() actions.select.callback({ vertical = true }) end, "Oil: Select vertical")
+  bmap("n", "<C-h>", function() actions.select.callback({ horizontal = true }) end, "Oil: Select horizontal")
+  bmap("n", "<C-t>", function() actions.select.callback({ tab = true }) end, "Oil: Select tab")
+
+  bmap("n", "<C-p>", actions.preview.callback, "Oil: Preview")
+  bmap("n", "q", actions.close.callback, "Oil: Close")
+  bmap("n", "<C-l>", actions.refresh.callback, "Oil: Refresh")
+
+  bmap("n", "-", actions.parent.callback, "Oil: Parent")
+  bmap("n", "_", actions.open_cwd.callback, "Oil: Open CWD")
+
+  bmap("n", "`", actions.cd.callback, "Oil: cd")
+  bmap("n", "g~", function() actions.cd.callback({ scope = "tab" }) end, "Oil: cd (tab)")
+
+  bmap("n", "gs", actions.change_sort.callback, "Oil: Change sort")
+  bmap("n", "gx", actions.open_external.callback, "Oil: Open external")
+
+  bmap("n", "g.", actions.toggle_hidden.callback, "Oil: Toggle hidden")
+  bmap("n", "g\\", actions.toggle_trash.callback, "Oil: Toggle trash")
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "oil",
+  callback = function(ev)
+    set_oil_keymaps(ev.buf)
   end,
 })
 
-vim.keymap.set("n", "<leader>gg", "<Cmd>LazyGit<CR>", { desc = "Git: LazyGit" })
+-- =========================================================
+-- Snacks Terminal Toggle (Ctrl-\)
+-- =========================================================
+map({ "n", "t" }, "<C-\\>", function()
+  local ok, Snacks = pcall(require, "snacks")
+  if ok then
+    Snacks.terminal.toggle()
+  end
+end, "Terminal Toggle")
 
+-- Terminal: ESC -> Normal mode (so y/v work)
+vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true, desc = "Terminal: Normal mode" })
