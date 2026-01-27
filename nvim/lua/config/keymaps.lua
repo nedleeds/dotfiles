@@ -244,21 +244,21 @@ map("i", "<C-k>", function()
   return "<C-k>"
 end, "PUM: Prev", { expr = true })
 
--- ---------------------------------------------------------
--- Whitespace cleanup on save
--- ---------------------------------------------------------
-do
-  local grp = vim.api.nvim_create_augroup("DHLTrimWhitespace", { clear = true })
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    group = grp,
-    pattern = "*",
-    callback = function()
-      local view = vim.fn.winsaveview()
-      vim.cmd([[silent! %s/\s\+$//e]])
-      vim.fn.winrestview(view)
-    end,
-  })
-end
+-- -- ---------------------------------------------------------
+-- -- Whitespace cleanup on save
+-- -- ---------------------------------------------------------
+-- do
+--   local grp = vim.api.nvim_create_augroup("DHLTrimWhitespace", { clear = true })
+--   vim.api.nvim_create_autocmd("BufWritePre", {
+--     group = grp,
+--     pattern = "*",
+--     callback = function()
+--       local view = vim.fn.winsaveview()
+--       vim.cmd([[silent! %s/\s\+$//e]])
+--       vim.fn.winrestview(view)
+--     end,
+--   })
+-- end
 
 -- Toggle whitespace display
 map("n", "<leader>.", function()

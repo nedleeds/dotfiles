@@ -8,11 +8,13 @@ return {
   init = function()
     -- Ensure opencode CLI is discoverable from Neovim (before requiring opencode)
     do
-      local p = vim.fn.expand("~/.opencode/bin")
-      local path = vim.env.PATH or ""
-      if not path:find(p, 1, true) then
-        vim.env.PATH = p .. ":" .. path
-      end
+        local p = vim.fn.expand("~/.opencode/bin")
+        local path = vim.env.PATH or ""
+        local sep = (vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1) and ";" or ":"
+
+        if not path:find(p, 1, true) then
+          vim.env.PATH = p .. sep .. path
+        end
     end
 
     -- opencode opts (global)
@@ -20,20 +22,13 @@ return {
     vim.g.opencode_opts = {
       terminal = {
         toggleterm = false,
+        env = {
+            NODE_TLS_REJECT_UNAUTHORIZED = "0",
+        },
       },
-      -- Force toggleterm usage even in tmux environment
       detect_tmux = false,
-      -- Explicitly disable tmux integration
-      tmux = {
-        enabled = false,
-      },
-      -- Configure input to use snacks.nvim
-      input = {
-        enabled = true,
-        provider = function(opts, on_submit)
-          return require("snacks").input(opts, on_submit)
-        end,
-      },
+      tmux = { enabled = false },
+      input = { enabled = true, provider = function(opts, on_submit) return require("snacks").input(opts, on_submit) end },
     }
 
     -- Required for `opts.events.reload`
