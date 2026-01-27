@@ -14,6 +14,52 @@ return {
 
       local capabilities = LSP.make_capabilities()
 
+      -- ---------------------------------------------------------
+      -- LSP UI (Hover/Signature): border + size clamp
+      -- 1) handler 레벨 (정석)
+      -- 2) open_floating_preview 패치 (어디서 뜨든 최종 보장)
+      -- ---------------------------------------------------------
+      do
+        local border = "rounded" -- "single" | "double" | "rounded" | "solid" | "shadow"
+        local max_w = math.floor(vim.o.columns * 0.6)
+        local max_h = math.floor(vim.o.lines * 0.35)
+
+        -- (1) handler 레벨
+        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+          border = border,
+          max_width = max_w,
+          max_height = max_h,
+        })
+
+        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+          border = border,
+          max_width = max_w,
+          max_height = max_h,
+        })
+
+        -- (2) 최종 보장: hover/sig float 생성 시 기본 옵션 강제
+        --     (다른 모듈이 open_floating_preview를 직접 호출해도 적용됨)
+        local orig = vim.lsp.util.open_floating_preview
+        if not vim.g.__dhl_lsp_float_patched then
+          vim.g.__dhl_lsp_float_patched = true
+          vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+            opts = opts or {}
+
+            -- focus_id가 없을 때도 많아서, hover/sig만 좁히기 위해
+            -- handler에서 넘기는 focus_id를 우선 사용하고, 없으면 filetype 기반으로는 안 건드림.
+            local fid = opts.focus_id
+            if fid == "textDocument/hover" or fid == "textDocument/signatureHelp" then
+              opts.border = opts.border or border
+              opts.max_width = opts.max_width or max_w
+              opts.max_height = opts.max_height or max_h
+              if opts.wrap == nil then opts.wrap = true end
+            end
+
+            return orig(contents, syntax, opts, ...)
+          end
+        end
+      end
+
       local grp = U.augroup("lsp_attach")
       vim.g.__lsp_attach_grp = grp
 

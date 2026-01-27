@@ -2,6 +2,18 @@
 local M = {}
 
 -- ---------------------------------------------------------
+-- LSP Hover Configuration
+-- ---------------------------------------------------------
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+  vim.lsp.handlers.hover,
+  {
+    border = "rounded",
+    max_width = 80,
+    max_height = 20,
+  }
+)
+
+-- ---------------------------------------------------------
 -- Capabilities (cmp-nvim-lsp 있으면 자동 반영)
 -- ---------------------------------------------------------
 function M.make_capabilities()
