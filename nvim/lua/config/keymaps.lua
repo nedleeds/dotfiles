@@ -16,6 +16,7 @@ local function with_require(mod, fn, notify_name)
   end
 end
 
+local util = require("config.util")
 -- ---------------------------------------------------------
 -- which-key groups + icons (v3 icon table)
 -- ---------------------------------------------------------
@@ -43,7 +44,7 @@ do
 
       -- Singles (top-level)
       { "<leader>e", desc = "Explorer",           icon = { icon = " ",  hl = "WKIconExplorer" } },
-      { "<leader>q", desc = "Quit",               icon = { icon = "󰗼 ", hl = "WKIconFile" } },
+      { "<leader>q", desc = "Quit Window",        icon = { icon = "󰗼 ", hl = "WKIconFile" } },
       { "<leader>T", desc = "Retab",              icon = { icon = "󰉢 ", hl = "WKIconFormat" } },
 
       -- Non-leader keymaps (shown with ?)
@@ -86,7 +87,8 @@ end, "Log: snacks history")
 -- ---------------------------------------------------------
 map("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", "Search: Clear highlight")
 map("n", "<leader>w", "<Cmd>w<CR>", "File: Save")
-map("n", "<leader>q", "<Cmd>close<CR>", "Quit Window")
+
+map("n", "<leader>q", util.smart_close_window, "Close window / Quit")
 map("n", "<leader>T", "<Cmd>retab<CR>", "Format: Retab")
 
 -- LSP format (global)
