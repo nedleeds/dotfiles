@@ -95,14 +95,6 @@ return {
       end
     end
 
-    -- Treesitter links (색을 직접 찍지 않고 테마 그룹 재사용)
-    vim.api.nvim_set_hl(0, "@keyword.import.python",   { link = "Keyword" })
-    vim.api.nvim_set_hl(0, "@keyword.import",          { link = "Keyword" })
-    vim.api.nvim_set_hl(0, "@module.python",           { link = "Identifier" })
-    vim.api.nvim_set_hl(0, "@module",                  { link = "Identifier" })
-    vim.api.nvim_set_hl(0, "@keyword.function.python", { link = "Statement" })
-    vim.api.nvim_set_hl(0, "@keyword.function",        { link = "Statement" })
-
     -- Statusline transparency (lualine bg band)
     vim.api.nvim_set_hl(0, "StatusLine",   { bg = "NONE" })
     vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
