@@ -86,7 +86,7 @@ end, "Log: snacks history")
 -- ---------------------------------------------------------
 map("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", "Search: Clear highlight")
 map("n", "<leader>w", "<Cmd>w<CR>", "File: Save")
-map("n", "<leader>q", "<Cmd>q<CR>", "File: Quit")
+map("n", "<leader>q", "<Cmd>close<CR>", "Quit Window")
 map("n", "<leader>T", "<Cmd>retab<CR>", "Format: Retab")
 
 -- LSP format (global)

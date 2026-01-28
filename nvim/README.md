@@ -19,9 +19,8 @@ rm "$env:TEMP\dotfiles" -r -fo
 ```
 
 ## 0.2 powershell7 설치
-- https://github.com/powershell/powershell/releases 접속
-- 최상위 버전(26년1월28일 기준, 7.6.0.preview, 7.5.4버전은 터미널에서 기본 셸로 실행 시 에러발생) 확인
-- 최상위 버전의 Assets 토글 버튼 클릭 > ...-win-x64.msi 다운 > 설치 진행
+- https://github.com/powershell/powershell/releases
+- 최상위 버전 Assets 토글 버튼 클릭 > ...-win-x64.msi 다운 > 설치 진행
 - 터미널 실행 후 pwsh 설치 확인
 ```powershell
 pwsh --version
