@@ -1,7 +1,6 @@
 return {
   {
     dir = vim.fn.stdpath("config"),
-    name = "dhl-lsp",
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",

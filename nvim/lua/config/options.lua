@@ -32,3 +32,5 @@ if vim.fn.has("unnamedplus") == 1 then
 else
   vim.o.clipboard = "unnamed"
 end
+
+vim.opt.autoread = true

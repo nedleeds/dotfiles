@@ -20,20 +20,13 @@ rm "$env:TEMP\dotfiles" -r -fo
 
 ## 0.2 powershell7 설치
 - https://github.com/powershell/powershell/releases
-- 최상위 버전 Assets 토글 버튼 클릭 > 'show all assets' 클릭 > ...-win-x64.msi 다운 > 설치 진행
+- 최상위 버전 Assets 토글 버튼 클릭 > ...-win-x64.msi 다운 > 설치 진행
 - 터미널 실행 후 pwsh 설치 확인
 ```powershell
 pwsh --version
 ```
 
 ## 1. fzf
-
-#### 1-0)  fzf requirements
-
-- ripgrep 설치를 해야함
-- https://github.com/BurntSushi/ripgrep/releases 이동
-- 최상단 버전 확인 > 하기 Assets 토글 버튼 클릭 > ripgrep-15.1.0-x86_64-pc-windows-msvc.zip 다운
-- 압축 해제 후 설치 진행
 
 #### 1-1) 사용자 bin 폴더 생성 (없으면 생성)
 ```powershell
@@ -43,7 +36,7 @@ mkdir $env:USERPROFILE\bin -ErrorAction Ignore
 #### 1-2) GitHub Release 다운로드
 
 a. https://github.com/junegunn/fzf/releases 이동
-b. 최상단 버전 확인 > 하기 Assets 토글 버튼 클릭 > windows_amd64.zip 다운
+b. 최상단 버전 확인 > 하기 Assets 토글 버튼 클릭 > windows_amd62.zip 다운
 
 
 #### 1-3) 압축 해제
