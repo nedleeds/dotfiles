@@ -190,7 +190,7 @@ map("n", "+", function() vim.cmd("resize +" .. resize_step) end, "Window: Increa
 -- ---------------------------------------------------------
 -- DAP
 -- ---------------------------------------------------------
-map("n", "<leader>dc", with_require("dap", function(dap) dap.continue() end, "nvim-dap"), "Debug: Continue")
+vim.keymap.set("n", "dc", function() require("dap").continue() end, { desc = "DAP Continue" })
 map("n", "<leader>do", with_require("dap", function(dap) dap.step_over() end, "nvim-dap"), "Debug: Step over")
 map("n", "<leader>di", with_require("dap", function(dap) dap.step_into() end, "nvim-dap"), "Debug: Step into")
 map("n", "<leader>dO", with_require("dap", function(dap) dap.step_out() end, "nvim-dap"), "Debug: Step out")
@@ -367,3 +367,16 @@ end, "Terminal Toggle")
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true, desc = "Terminal: Normal mode" })
 
 vim.keymap.set("n", "<leader>tv", ":vsplit | terminal<CR>")
+
+-- ---------------------------------------------------------
+-- Diff / Merge helpers (fast keys)
+-- dl = take ours   (//2)
+-- dr = take theirs (//3)
+-- ---------------------------------------------------------
+map({ "n", "x" }, "<leader>dl", "<Cmd>diffget //2<CR>", "Diff: Get LOCAL (ours)")
+map({ "n", "x" }, "<leader>dr", "<Cmd>diffget //3<CR>", "Diff: Get REMOTE (theirs)")
+
+
+-- Visual mode: keep selection after indent/unindent
+vim.keymap.set("x", ">", ">gv", { noremap = true, silent = true })
+vim.keymap.set("x", "<", "<gv", { noremap = true, silent = true })

@@ -45,15 +45,6 @@ return {
       local bg_cursorline = "#252525"
       local bg_visual = "#264F78"
 
-      -- soften fzf-lua match highlight
-      vim.api.nvim_set_hl(0, "FzfLuaSearch", { fg = "#f58900", bold = false })
-
-      -- selected line
-      vim.api.nvim_set_hl(0, "FzfLuaCursorLine", { bg = "#252525" })
-
-      -- popup background (transparent look)
-      vim.api.nvim_set_hl(0, "FzfLuaNormal", { bg = "NONE" })
-      vim.api.nvim_set_hl(0, "FzfLuaBorder", { fg = "#7f9fbf", bg = "NONE" })
 
       do
         -- vscode.nvim exposes colors; keep this defensive across versions
@@ -131,11 +122,34 @@ return {
 
     apply_overrides()
 
+    vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter" }, {
+      group = vim.api.nvim_create_augroup("VscodeThemeOverridesFzf", { clear = true }),
+      pattern = { "fzf", "fzf-lua" },
+      callback = apply_overrides,
+    })
     -- Re-apply after any :colorscheme change
     vim.api.nvim_create_autocmd("ColorScheme", {
       group = vim.api.nvim_create_augroup("VscodeThemeOverrides", { clear = true }),
       callback = apply_overrides,
     })
+
+      -- soften fzf-lua match highlight
+      vim.api.nvim_set_hl(0, "FzfLuaSearch", { fg = "#f58900", bold = false })
+
+      -- selected line
+      vim.api.nvim_set_hl(0, "FzfLuaCursorLine", { bg = "#252525" })
+
+      -- popup background (transparent look)
+      vim.api.nvim_set_hl(0, "FzfLuaNormal", { bg = "NONE" })
+      vim.api.nvim_set_hl(0, "FzfLuaBorder", { fg = "#7f9fbf", bg = "NONE" })
+
+      -- FzfLua selection / cursorline variants (covers multiple versions)
+      vim.api.nvim_set_hl(0, "FzfLuaCursorLine",   { bg = "#252525" })
+      vim.api.nvim_set_hl(0, "FzfLuaCursorLineNr", { bg = "#252525" })
+      vim.api.nvim_set_hl(0, "FzfLuaSel",          { bg = "#252525" })
+      vim.api.nvim_set_hl(0, "FzfLuaSelBg",        { bg = "#252525" })
+      vim.api.nvim_set_hl(0, "FzfLuaFzfCursorLine",{ bg = "#252525" })
+
   end,
 }
 

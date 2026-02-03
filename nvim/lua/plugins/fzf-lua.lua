@@ -3,8 +3,5 @@ return {
   -- optional for icon support
   dependencies = { "nvim-tree/nvim-web-devicons" },
   opts = {
-    winopts = {
-      winhighlight = "CursorLine:FzfLuaCursorLine",
-    },
   },
 }

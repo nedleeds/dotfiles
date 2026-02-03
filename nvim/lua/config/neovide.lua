@@ -11,7 +11,7 @@ vim.o.guifont = "JetBrainsMono Nerd Font:h11"
 --------------------------------------------------
 -- Opacity (NEW)
 --------------------------------------------------
-vim.g.neovide_opacity = 1.0
+vim.g.neovide_opacity = 0.95
 
 --------------------------------------------------
 -- Rendering
@@ -21,10 +21,8 @@ vim.g.neovide_refresh_rate = 120
 --------------------------------------------------
 -- Cursor
 --------------------------------------------------
-vim.g.neovide_cursor_animation_length = 0.05
-vim.g.neovide_cursor_trail_size = 0.3
-vim.g.neovide_cursor_antialiasing = true
-vim.g.neovide_cursor_vfx_mode = ""
+vim.g.neovide_cursor_animation_length = 0.03
+vim.g.neovide_cursor_trail_size = 0.8
 
 --------------------------------------------------
 -- Padding
