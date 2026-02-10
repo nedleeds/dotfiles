@@ -85,7 +85,6 @@ end, "Log: snacks history")
 -- General / File
 -- ---------------------------------------------------------
 map("n", "<C-[>", "<Cmd>nohlsearch<CR><Esc>", "Search: Clear highlight")
-map("n", "<leader>w", "<Cmd>w<CR>", "File: Save")
 map("n", "<leader>q", "<Cmd>close<CR>", "Quit Window")
 map("n", "<leader>T", "<Cmd>retab<CR>", "Format: Retab")
 
@@ -175,10 +174,13 @@ map("n", "<C-z>", function()
   require("config.zoom").toggle()
 end, "Window: Zoom toggle")
 
--- Split
-map("n", "<leader>ws", "<C-w>s", "Window: Split horizontal")
+-- Window Split
 map("n", "<leader>wv", "<C-w>v", "Window: Split vertical")
+map("n", "<leader>wh", "<C-w>s", "Window: Split horizontal")
 map("n", "<leader>wd", "<Cmd>close<CR>", "Window: Close current")
+for i = 1, 9 do
+  vim.keymap.set("n", "<leader>"..i, i.."<C-w>w")
+end
 
 -- Resize (NO Ctrl, NO Arrow)
 local resize_step = 5
@@ -325,8 +327,8 @@ local function set_oil_keymaps(bufnr)
   bmap("n", "g?", actions.show_help.callback, "Oil: Help")
 
   bmap("n", "<CR>", actions.select.callback, "Oil: Select")
-  bmap("n", "<C-s>", function() actions.select.callback({ vertical = true }) end, "Oil: Select vertical")
-  bmap("n", "<C-h>", function() actions.select.callback({ horizontal = true }) end, "Oil: Select horizontal")
+  bmap("n", "<C-v>", function() actions.select.callback({ vertical = true }) end, "Oil: Select vertical")
+  bmap("n", "<C-s>", function() actions.select.callback({ horizontal = true }) end, "Oil: Select horizontal")
   bmap("n", "<C-t>", function() actions.select.callback({ tab = true }) end, "Oil: Select tab")
 
   bmap("n", "<C-p>", actions.preview.callback, "Oil: Preview")
