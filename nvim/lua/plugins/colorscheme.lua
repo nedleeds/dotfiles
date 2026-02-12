@@ -96,8 +96,11 @@ return {
       vim.api.nvim_set_hl(0, "StatusLine",   { bg = "NONE" })
       vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE" })
       vim.api.nvim_set_hl(0, "MsgArea",      { bg = "NONE" })
-      vim.api.nvim_set_hl(0, "MsgSeparator", { bg = "NONE" })
-      vim.api.nvim_set_hl(0, "WinSeparator", { bg = "NONE" })
+      vim.api.nvim_set_hl(0, "MsgSeparator", { fg = "#3a3a3a", bg = "NONE" })
+
+      -- window split separator (less visible)
+      vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#3a3a3a", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "VertSplit",    { fg = "#3a3a3a", bg = "NONE" })
 
       -- =========================
       -- Cursor / visual (subtle)

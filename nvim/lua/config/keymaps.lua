@@ -179,7 +179,7 @@ map("n", "<leader>wv", "<C-w>v", "Window: Split vertical")
 map("n", "<leader>wh", "<C-w>s", "Window: Split horizontal")
 map("n", "<leader>wd", "<Cmd>close<CR>", "Window: Close current")
 for i = 1, 9 do
-  vim.keymap.set("n", "<leader>"..i, i.."<C-w>w")
+  map("n", "<leader>" .. i, i .. "<C-w>w", "which_key_ignore")
 end
 
 -- Resize (NO Ctrl, NO Arrow)
