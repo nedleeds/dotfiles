@@ -37,8 +37,6 @@ do
       { "<leader>ol", desc = "Add line", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
       { "<leader>ou", desc = "Scroll up", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
       { "<leader>od", desc = "Scroll down", icon = { icon = "󰚩 ", hl = "WKIconOpenCode" } },
-      { "<leader>t", group = "Terminal", icon = { icon = " ", hl = "WKIconOff" } },
-      { "<leader>v", group = "Venv / Python", icon = { icon = " ", hl = "WKIconOn" } },
       { "<leader>w", group = "Window",  icon = { icon = "󰖲 ", hl = "WKIconWindow" } },
       { "<leader>s", group = "Session", icon = { icon = " ", hl = "WKIconSession" } },
       { "<leader>m", group = "Log Messages", icon = { icon = "󱅫 ", hl = "WKIconNotify" } },
@@ -384,12 +382,3 @@ map({ "n", "x" }, "<leader>dr", "<Cmd>diffget //3<CR>", "Diff: Get REMOTE (their
 -- Visual mode: keep selection after indent/unindent
 vim.keymap.set("x", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("x", "<", "<gv", { noremap = true, silent = true })
-
-
-vim.keymap.set("n", "<leader>vp", function()
-  require("config.pyright").pick_pyright_interpreter({ max_up = 3, max_depth = 2 })
-end, { desc = "Pick Pyright interpreter (up=3 depth=2)" })
-
-vim.keymap.set("n", "<leader>vP", function()
-  require("config.pyright").pick_pyright_interpreter({ max_up = 6, max_depth = 4 })
-end, { desc = "Pick Pyright interpreter (up=6 depth=4)" })

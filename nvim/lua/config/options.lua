@@ -42,4 +42,3 @@ else
 end
 
 vim.opt.autoread = true
-
