@@ -1,4 +1,12 @@
-float ease(float x) { return pow(1.0 - x, 10.0); }
+// ==========================================
+// Optimized Thor Lightning Shader for Ghostty
+// ==========================================
+
+float ease(float x) {
+    float x2 = 1.0 - x;
+    float x4 = x2 * x2;
+    return x4 * x4 * x2;
+}
 
 vec2 normalize(vec2 value, float isPosition) {
     return (value * 2.0 - (iResolution.xy * isPosition)) / iResolution.y;
@@ -10,32 +18,36 @@ float blend(float t) {
 }
 
 vec2 getRectangleCenter(vec4 rectangle) {
-    return vec2(rectangle.x + (rectangle.z / 2.), rectangle.y - (rectangle.w / 2.));
+    return vec2(rectangle.x + (rectangle.z / 2.0), rectangle.y - (rectangle.w / 2.0));
 }
 
 // ----------------------------
-// Noise helpers
+// Noise helpers (성능 최적화)
 // ----------------------------
-float random(vec2 st) {
-    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+float random(vec2 p) {
+    vec3 p3  = fract(vec3(p.xyx) * .1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
 }
 
 float noise(vec2 p) {
     vec2 i = floor(p);
     vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
     float a = random(i);
     float b = random(i + vec2(1.0, 0.0));
     float c = random(i + vec2(0.0, 1.0));
     float d = random(i + vec2(1.0, 1.0));
-    vec2 u = f * f * (3.0 - 2.0 * f);
+
     return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
 }
 
-float fbm(vec2 p) {
+float fbm_fast(vec2 p) {
     float v = 0.0;
     float a = 0.5;
     mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 3; i++) {
         v += a * noise(p);
         p = m * p;
         a *= 0.5;
@@ -45,7 +57,6 @@ float fbm(vec2 p) {
 
 // ----------------------------
 // Lightning distance field
-// - returns distance to a warped, jagged arc line
 // ----------------------------
 float lightningArc(vec2 p, vec2 a, vec2 b, float time, float progress, out float tAlong) {
     vec2 dir = b - a;
@@ -54,37 +65,21 @@ float lightningArc(vec2 p, vec2 a, vec2 b, float time, float progress, out float
     dir /= dist;
 
     vec2 perp = vec2(-dir.y, dir.x);
-
     float t = clamp(dot(p - a, dir) / dist, 0.0, 1.0);
     tAlong = t;
 
-    // base projection on segment
     vec2 projected = a + dir * (t * dist);
 
-    // --- make it more "lightning" ---
-    // strong, fractal jitter with a little domain warp
-    float w1 = fbm(vec2(t * 10.0, time * 2.6));
-    float w2 = fbm(vec2(t * 22.0 + w1 * 1.5, time * 4.2));
-    float w3 = noise(vec2(t * 48.0 + w2 * 2.0, time * 7.0));
+    float w1 = fbm_fast(vec2(t * 10.0, time * 2.6));
+    float w2 = fbm_fast(vec2(t * 22.0 + w1 * 1.5, time * 4.2));
 
-    // jaggedness profile: stronger near middle, softer near ends
-    float mid = 1.0 - abs(2.0 * t - 1.0); // 0..1..0
+    float mid = 1.0 - abs(2.0 * t - 1.0);
     float jag = (0.55 + 0.45 * mid);
-
-    // amplitude also scales with progress
     float amp = (0.030 * jag) + (0.020 * jag) * (w2 - 0.5);
 
-    // "steppy" effect: quantize a component to get sharp kinks
-    float stepper = floor((w1 + w3) * 7.0) / 7.0;
-    float kink = (stepper - 0.5) * 0.020;
+    float jitter = (w2 - 0.5) * amp * progress * 2.0;
 
-    float jitter = ((w2 - 0.5) * amp + kink) * progress;
-
-    // small along-dir warp to avoid too smooth appearance
-    float alongWarp = (w3 - 0.5) * 0.010 * progress;
-
-    vec2 warped = projected + perp * jitter + dir * alongWarp;
-
+    vec2 warped = projected + perp * jitter;
     return length(p - warped);
 }
 
@@ -94,7 +89,6 @@ float lightningArc(vec2 p, vec2 a, vec2 b, float time, float progress, out float
 const vec4 TRAIL_COLOR_ACCENT = vec4(0.705, 0.831, 0.957, 1.0);
 const vec4 ELECTRIC_COLOR     = vec4(0.50, 0.82, 1.00, 1.0);
 
-// tweakables
 const float DURATION       = 0.9;
 const float TAIL_EXTENSION = 0.6;
 
@@ -105,10 +99,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec4 base = fragColor;
     #endif
 
-    vec2 vu = normalize(fragCoord, 1.);
+    vec2 vu = normalize(fragCoord, 1.0);
 
-    vec4 currentCursor  = vec4(normalize(iCurrentCursor.xy, 1.),  normalize(iCurrentCursor.zw, 0.));
-    vec4 previousCursor = vec4(normalize(iPreviousCursor.xy, 1.), normalize(iPreviousCursor.zw, 0.));
+    vec4 currentCursor  = vec4(normalize(iCurrentCursor.xy, 1.0),  normalize(iCurrentCursor.zw, 0.0));
+    vec4 previousCursor = vec4(normalize(iPreviousCursor.xy, 1.0), normalize(iPreviousCursor.zw, 0.0));
 
     vec2 centerCC = getRectangleCenter(currentCursor);
     vec2 centerCP = getRectangleCenter(previousCursor);
@@ -117,12 +111,18 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     float progress = blend(clamp((iTime - iTimeCursorChange) / DURATION, 0.0, 1.0));
     float easedProgress = ease(progress);
 
-    if (easedProgress <= 0.0001) {
+    if (easedProgress <= 0.0001 || distance(centerCC, centerCP) < 0.001) {
         fragColor = base;
         return;
     }
 
-    // tail taper
+    vec2 minBounds = min(centerCC, centerCP_new) - vec2(0.2);
+    vec2 maxBounds = max(centerCC, centerCP_new) + vec2(0.2);
+    if (vu.x < minBounds.x || vu.x > maxBounds.x || vu.y < minBounds.y || vu.y > maxBounds.y) {
+        fragColor = base;
+        return;
+    }
+
     float lineLength = distance(centerCC, centerCP_new);
     float distanceToEnd = distance(vu.xy, centerCC);
     float alphaModifier = distanceToEnd / max(lineLength * easedProgress, 1e-4);
@@ -130,46 +130,42 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
     float trailOpacity = pow(1.0 - smoothstep(0.0, 1.0, alphaModifier), 2.0);
 
-    // --- lightning computation ---
     float tAlong = 0.0;
     float arc = lightningArc(vu, centerCC, centerCP_new, iTime, easedProgress, tAlong);
 
-    // flicker/pulse: irregular and stronger near the head
-    float head = smoothstep(1.0, 0.0, tAlong);          // 1 near start (a), 0 near end (b) depending on direction
+    float head = smoothstep(1.0, 0.0, tAlong);
     float flicker = 0.70 + 0.30 * noise(vec2(iTime * 35.0, tAlong * 9.0));
     float pulse   = 0.85 + 0.15 * sin(iTime * 28.0 + tAlong * 22.0);
     float energy  = flicker * pulse * (0.75 + 0.25 * head);
 
-    // thickness: core sharper, glow wider
-    float arcThickness = 0.0022;
+    float arcThickness = 0.0005;
     float core = 1.0 - smoothstep(arcThickness * 0.45, arcThickness, arc);
     float glow = 1.0 - smoothstep(arcThickness * 1.8, arcThickness * 7.0, arc);
 
-    // micro-branches (very subtle): sample a nearby shifted arc to look like a side spark
-    // NOTE: cheap approximation, still "light"
-    float branchShift = (noise(vec2(tAlong * 50.0, iTime * 10.0)) - 0.5) * 0.010 * easedProgress;
-    float tDummy = 0.0;
-    float arc2 = lightningArc(vu + vec2(branchShift, -branchShift), centerCC, centerCP_new, iTime + 0.03, easedProgress * 0.75, tDummy);
-    float branch = 1.0 - smoothstep(arcThickness * 0.65, arcThickness * 1.6, arc2);
+    float fakeBranch = glow * (noise(vec2(tAlong * 50.0, iTime * 20.0)) - 0.4);
+    float branch = max(0.0, fakeBranch);
 
-    // hotspots / sparks along the arc
     float sparkN = noise(vec2(tAlong * 80.0, iTime * 16.0));
     float sparks = smoothstep(0.92, 1.0, sparkN) * (1.0 - smoothstep(0.0, 1.0, alphaModifier));
-    sparks *= (1.0 - smoothstep(0.0, 0.15, abs(tAlong - 0.5))); // bias toward mid a bit
+    sparks *= (1.0 - smoothstep(0.0, 0.15, abs(tAlong - 0.5)));
 
-    float strength = trailOpacity * 0.75 * energy;
+    // --- 화력 지원 버전 색상 및 최종 합성 ---
+    float boostedStrength = trailOpacity * energy * 1.5;
 
-    // color: core trends to white, outer to cyan/blue
-    vec3 outerRGB = mix(ELECTRIC_COLOR.rgb, TRAIL_COLOR_ACCENT.rgb, 0.25);
-    vec3 coreRGB  = mix(vec3(1.0), outerRGB, 0.35);
+    vec3 outerRGB = mix(ELECTRIC_COLOR.rgb, TRAIL_COLOR_ACCENT.rgb, 0.2);
+    vec3 coreRGB  = vec3(1.0);
 
-    // compose: core + glow + branch + sparks
     vec3 added =
-        coreRGB  * (core * strength) +
-        outerRGB * (glow * strength * 0.22) +
-        outerRGB * (branch * strength * 0.18) +
-        vec3(1.0) * (sparks * strength * 0.35);
+        coreRGB  * (core * boostedStrength * 1.2) +
+        outerRGB * (glow * boostedStrength * 0.35) +
+        outerRGB * (branch * boostedStrength * 1.2) +
+        vec3(1.0) * (sparks * boostedStrength * 0.75);
 
-    vec3 outRGB = clamp(base.rgb + added, 0.0, 1.0);
+    float effectMask = clamp(length(added), 0.0, 1.0);
+    float effectOpacity = 0.85;
+
+    vec3 outRGB = mix(base.rgb, added, effectMask * effectOpacity);
+    outRGB = clamp(outRGB + added * 0.2, 0.0, 1.0);
+
     fragColor = vec4(outRGB, base.a);
 }
