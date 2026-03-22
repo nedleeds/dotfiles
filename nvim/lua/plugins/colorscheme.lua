@@ -12,6 +12,31 @@ return {
 
     github.setup(opts)
 
+    -- Make red palette less harsh
+    do
+      local okp, palette = pcall(require, "github-theme.palette")
+      if okp then
+        local default_scheme = "github_dark_default"
+        local p = palette.load(default_scheme)
+
+        if p then
+          p.red = { base = "#c75050", bright = "#d46565" }
+        end
+
+        local loaded = package.loaded["github-theme.palette"]
+        if loaded and loaded.load then
+          local orig_load = loaded.load
+          loaded.load = function(name)
+            local result = orig_load(name)
+            if name == default_scheme and result then
+              result.red = { base = "#c75050", bright = "#d46565" }
+            end
+            return result
+          end
+        end
+      end
+    end
+
     -- colorscheme 먼저 적용
     vim.cmd.colorscheme("github_dark_default")
 
@@ -148,3 +173,4 @@ return {
     end
   end,
 }
+

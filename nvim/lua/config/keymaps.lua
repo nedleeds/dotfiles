@@ -367,3 +367,4 @@ end, "Terminal Toggle")
 
 -- Terminal: ESC -> Normal mode (so y/v work)
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true, desc = "Terminal: Normal mode" })
+

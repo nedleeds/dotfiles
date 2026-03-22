@@ -39,7 +39,7 @@ return {
     keymaps = {},
     use_default_keymaps = false,
     view_options = {
-      show_hidden = false,
+      show_hidden = true,
       is_hidden_file = function(name, bufnr)
         local m = name:match("^%.")
         return m ~= nil
