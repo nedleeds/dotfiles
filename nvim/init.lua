@@ -1,4 +1,3 @@
-require("config.options")
-require("config.lazy")
-require("config.keymaps")
-require("config.session").setup()
+require("configs.options")
+require("configs.keymaps")
+require("configs.lazy")

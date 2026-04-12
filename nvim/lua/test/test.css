@@ -1,0 +1,85 @@
+/* LSP: cssls
+ * 테스트 방법:
+ *   K           → hover (속성 문서 보기)
+ *   completion  → 속성명/값 자동완성
+ *   diagnostics → 잘못된 속성/값에서 경고 확인
+ */
+
+/* ── 1. Hover (K) ────────────────────────────────────────────────
+ * display / grid-template-columns 위에서 K → MDN 설명 표시      */
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 16px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── 2. Flexbox completion ───────────────────────────────────────
+ * align-items: 뒤에서 자동완성 → center / flex-start / flex-end  */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+}
+
+/* ── 3. Custom properties (CSS variables) ────────────────────────
+ * var( 입력 시 --* 변수 자동완성 제안이 나와야 합니다.            */
+:root {
+  --color-bg:      #1e1e2e;
+  --color-surface: #313244;
+  --color-text:    #cdd6f4;
+  --color-accent:  #89b4fa;
+  --radius-sm:     4px;
+  --radius-md:     8px;
+  --spacing-base:  8px;
+}
+
+.button {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: calc(var(--spacing-base) * 1) calc(var(--spacing-base) * 2);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ── 4. Diagnostics (경고) ───────────────────────────────────────
+ * 아래는 존재하지 않는 속성 → cssls가 경고를 표시해야 합니다.
+ * (주석을 제거하면 경고 발생)                                     */
+/* .bad { colour: red; } */
+
+/* ── 5. Animation ────────────────────────────────────────────────
+ * animation-timing-function: 값 위에서 자동완성 확인             */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animated {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+/* ── 6. Media query ──────────────────────────────────────────────*/
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+}

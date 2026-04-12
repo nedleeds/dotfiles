@@ -1,21 +1,41 @@
 return {
   "folke/snacks.nvim",
   lazy = false,
-  priority = 1001, -- github-theme(1000)보다 먼저 로드되어도 문제 없음
-
+  priority = 1000,
   opts = {
-    input = { enabled = true },
     notifier = { enabled = true },
-    terminal = { enabled = true, start_insert = true },
-    hover = {
-      enabled = true,
-      border = "rounded",
-      max_width = 80,
-      max_height = 30,
+    input    = { enabled = true },
+    picker   = { enabled = true, ui_select = true },
+    terminal = { enabled = true },
+    words    = { enabled = false },
+    styles = {
+      notification_history = {
+        position = "bottom",
+        height   = 0.3,
+        border   = "none",
+        wo       = { winbar = " Notification History  ", number = false, relativenumber = false, signcolumn = "no", foldcolumn = "1" },
+      },
     },
   },
-
+  keys = {
+    { "<leader>mm", function()
+      local lines = vim.split(vim.fn.execute("messages"), "\n", { trimempty = true })
+      lines = vim.tbl_map(function(l) return " " .. l end, lines)
+      local buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+      vim.bo[buf].modifiable = false
+      Snacks.win({
+        buf      = buf,
+        position = "bottom",
+        height   = 0.3,
+        wo       = { winbar = " Message History  ", number = false, relativenumber = false },
+      })
+    end, desc = "Messages" },
+    { "<leader>ms", function() Snacks.notifier.show_history() end, desc = "Notification History" },
+  },
   config = function(_, opts)
-    require("snacks").setup(opts)
+    local snacks = require("snacks")
+    snacks.setup(opts)
+    vim.notify = snacks.notifier.notify
   end,
 }

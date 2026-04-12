@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- LSP: html
+     테스트 방법:
+       K           → hover (태그/속성 문서 보기)
+       completion  → 태그명/속성명 자동완성
+       diagnostics → 잘못된 속성/태그에서 경고 확인 -->
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML LSP Test</title>
+    <link rel="stylesheet" href="test.css" />
+  </head>
+
+  <body>
+    <!-- ── 1. Hover (K) ──────────────────────────────────────────
+         <article> / <section> 위에서 K → 태그 설명 표시          -->
+    <header>
+      <nav aria-label="주 내비게이션">
+        <ul>
+          <li><a href="#intro">소개</a></li>
+          <li><a href="#features">기능</a></li>
+          <li><a href="#contact">연락처</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- ── 2. Semantic tags & attribute completion ───────────────
+         <input type=" 뒤에서 자동완성 → text / email / number 등  -->
+    <main>
+      <section id="intro">
+        <h1>HTML LSP 테스트 페이지</h1>
+        <p>
+          이 파일은 <strong>html</strong> 언어 서버의 hover, 자동완성,
+          diagnostics 기능을 테스트하기 위해 작성되었습니다.
+        </p>
+      </section>
+
+      <section id="features">
+        <h2>지원 기능</h2>
+        <article>
+          <h3>폼 요소</h3>
+          <form action="/submit" method="post">
+            <label for="username">사용자명</label>
+            <input id="username" type="text" name="username" required autocomplete="username" />
+
+            <label for="email">이메일</label>
+            <input id="email" type="email" name="email" required />
+
+            <label for="age">나이</label>
+            <input id="age" type="number" name="age" min="1" max="120" />
+
+            <button type="submit">제출</button>
+          </form>
+        </article>
+
+        <article>
+          <h3>미디어</h3>
+          <!-- loading="lazy" 위에서 K → 속성 문서 확인 -->
+          <img
+            src="placeholder.png"
+            alt="테스트 이미지"
+            width="400"
+            height="300"
+            loading="lazy"
+          />
+
+          <video controls width="400">
+            <source src="demo.mp4" type="video/mp4" />
+            브라우저가 video 태그를 지원하지 않습니다.
+          </video>
+        </article>
+      </section>
+
+      <!-- ── 3. Table ───────────────────────────────────────────
+           <thead> / <tbody> 위에서 K → 설명 확인               -->
+      <section>
+        <h2>테이블</h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">서버</th>
+              <th scope="col">언어</th>
+              <th scope="col">상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>lua_ls</td><td>Lua</td><td>✓</td></tr>
+            <tr><td>clangd</td><td>C / C++</td><td>✓</td></tr>
+            <tr><td>pyright</td><td>Python</td><td>✓</td></tr>
+            <tr><td>eslint</td><td>JS / TS</td><td>✓</td></tr>
+            <tr><td>cssls</td><td>CSS / SCSS</td><td>✓</td></tr>
+            <tr><td>jsonls</td><td>JSON</td><td>✓</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- ── 4. Diagnostics (경고) ─────────────────────────────────
+         아래는 존재하지 않는 속성 → html LSP가 경고를 표시해야 합니다.
+         (주석을 제거하면 경고 발생)                               -->
+    <!-- <div unknownattr="bad"></div> -->
+
+    <footer id="contact">
+      <address>
+        <a href="mailto:test@example.com">test@example.com</a>
+      </address>
+    </footer>
+  </body>
+</html>

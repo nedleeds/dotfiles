@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LSP jsonls test",
+  "description": "jsonls hover / diagnostics 테스트용 파일.\n  K → 키 위에서 hover (스키마 설명 표시)\n  잘못된 타입 → diagnostics 경고 확인",
+  "type": "object",
+  "properties": {
+    "editor": {
+      "description": "에디터 식별자",
+      "type": "string"
+    },
+    "version": {
+      "description": "시맨틱 버전 문자열",
+      "type": "string"
+    },
+    "window": {
+      "description": "창 크기 설정",
+      "type": "object",
+      "properties": {
+        "width":  { "type": "integer", "minimum": 40 },
+        "height": { "type": "integer", "minimum": 10 }
+      },
+      "required": ["width", "height"]
+    },
+    "plugins": {
+      "description": "활성화된 플러그인 이름 목록",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "debug": {
+      "description": "디버그 모드 활성화 여부",
+      "type": "boolean"
+    }
+  },
+  "required": ["editor", "version"],
+
+  "examples": [
+    {
+      "editor": "neovim",
+      "version": "0.11.0",
+      "window": { "width": 180, "height": 50 },
+      "plugins": ["lazy.nvim", "fzf-lua", "blink.cmp"],
+      "debug": false
+    }
+  ]
+}
