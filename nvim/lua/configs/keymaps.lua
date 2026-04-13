@@ -2,12 +2,6 @@ local map = vim.keymap.set
 
 vim.g.mapleader = " "
 
--- Windows
-map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
-map("n", "<C-j>", "<C-w>j", { desc = "Go to down window" })
-map("n", "<C-k>", "<C-w>k", { desc = "Go to up window" })
-map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
-map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Close window" })
 
 -- Buffers
 map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
@@ -56,9 +50,59 @@ map("n", "<leader>s.", function() Snacks.scratch() end,       { desc = "Toggle s
 -- Git (Snacks pickers)
 map("n", "<leader>gl", function() Snacks.picker.git_log() end,    { desc = "Git log" })
 map("n", "<leader>gs", function() Snacks.picker.git_status() end, { desc = "Git status" })
-map({ "n", "t" }, "<C-\\>", function() Snacks.terminal.toggle("pwsh", { count = 1, win = { position = "right" } }) end, { desc = "Terminal Toggle (right)" })
-map({ "n", "t" }, "<C-_>", function() Snacks.terminal.toggle("pwsh", { count = 2, win = { position = "bottom" } }) end, { desc = "Terminal Toggle (bottom)" })
-map("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "Move to left window" })
-map("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "Move to lower window" })
-map("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "Move to upper window" })
-map("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Move to right window" })
+
+-- Terminal (Snacks terminal)
+map({ "n", "t" }, "<C-\\>", function() Snacks.terminal.toggle("pwsh", { count = 1, win = { position = "right" } }) end, { desc = "Terminal: Toggle (right)" })
+map({ "n", "t" }, "<C-_>", function() Snacks.terminal.toggle("pwsh", { count = 2, win = { position = "bottom" } }) end, { desc = "Terminal: Toggle (bottom)" })
+
+
+-- ---------------------------------------------------------
+-- Window navigation
+-- ---------------------------------------------------------
+-- Close window
+map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Window: Close" })
+-- Zoom toggle
+map("n", "<C-z>", function() require("configs.zoom").toggle() end, { desc = "Window: Zoom toggle" })
+
+-- Window Split
+map("n", "<leader>wv", "<C-w>v", { desc = "Window: Split vertical" })
+map("n", "<leader>wh", "<C-w>s", { desc = "Window: Split horizontal"})
+map("n", "<leader>wd", "<Cmd>close<CR>", { desc = "Window: Close current"})
+map("n", "<C-h>", "<C-w>h", { desc = "Window: Go to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Window: Go to down window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Window: Go to up window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Window: Go to right window" })
+
+-- Resize (NO Ctrl, NO Arrow)
+local resize_step = 5
+map("n", "-", function() vim.cmd("vertical resize -" .. resize_step) end, { desc = "Window: Decrease width" })
+map("n", "=", function() vim.cmd("vertical resize +" .. resize_step) end, { desc = "Window: Increase width" })
+map("n", "_", function() vim.cmd("resize -" .. resize_step) end, { desc = "Window: Decrease height"})
+map("n", "+", function() vim.cmd("resize +" .. resize_step) end, { desc = "Window: Increase height"})
+
+local windows = require("configs.windows")
+
+vim.api.nvim_set_hl(0, "WinHintsFloat", { fg = "#000000", bg = "#e0af68", bold = true })
+
+map("n", "<leader>ww", function()
+  windows.show_win_hints()
+  vim.cmd("redraw")
+  local ok, ch = pcall(vim.fn.getcharstr)
+  windows.hide_win_hints()
+  if ok then
+    local num = tonumber(ch)
+    if num then
+      windows.goto_win(num == 0 and 10 or num)
+    end
+  end
+end, { desc = "Window: Pick by number" })
+
+-- which-key용
+for i = 1, 9 do
+  map("n", "<leader>w" .. i, function()
+    windows.goto_win(i)
+  end, { desc = "Go to window " .. i })
+end
+map("n", "<leader>w0", function()
+  windows.goto_win(10)
+end, { desc = "Go to window 10" })

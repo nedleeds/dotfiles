@@ -35,3 +35,4 @@ vim.opt.splitbelow = true
 vim.diagnostic.config({ float = { border = "rounded" } })
 vim.api.nvim_set_hl(0, "@markup.raw", { italic = false })
 vim.api.nvim_set_hl(0, "@markup.raw.block.markdown", { italic = false })
+vim.api.nvim_set_hl(0, "@markup.raw.markdown_inline", { fg = "#ff9d5c", bg = "#2a1f1a", bold = true, italic = false })

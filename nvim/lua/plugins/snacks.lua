@@ -6,7 +6,6 @@ return {
     notifier = { enabled = true },
     input    = { enabled = true },
     picker   = { enabled = true, ui_select = true },
-    terminal = { enabled = true },
     words    = { enabled = false },
     styles = {
       notification_history = {
@@ -14,6 +13,17 @@ return {
         height   = 0.3,
         border   = "none",
         wo       = { winbar = " Notification History  ", number = false, relativenumber = false, signcolumn = "no", foldcolumn = "1" },
+      },
+    },
+    terminal = {
+      enabled = true,
+      win = {
+        keys = {
+          nav_h = { "<C-h>", function() vim.cmd("wincmd h") end, desc = "Go to left window",  mode = { "n", "t" } },
+          nav_j = { "<C-j>", function() vim.cmd("wincmd j") end, desc = "Go to down window", mode = { "n", "t" } },
+          nav_k = { "<C-k>", function() vim.cmd("wincmd k") end, desc = "Go to up window",   mode = { "n", "t" } },
+          nav_l = { "<C-l>", function() vim.cmd("wincmd l") end, desc = "Go to right window", mode = { "n", "t" } },
+        },
       },
     },
   },

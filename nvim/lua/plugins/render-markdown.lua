@@ -12,7 +12,7 @@ return {
     hl(0, "MdH6", { fg = "#56B6C2", bg = "none", bold = true })
   end,
   opts = {
-    anti_conceal = { enabled = false },
+    anti_conceal = { enabled = true },
     heading = {
       position    = "inline",
       icons       = { "┃ ", "┃ ", "┃ ", "┃ ", "┃ ", "┃ " },
@@ -36,6 +36,7 @@ return {
       below          = "~",
       left_pad       = 2,
       right_pad      = 2,
+      inline_pad     = 1,
       style          = "language",
     },
   },
