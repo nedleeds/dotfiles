@@ -2,7 +2,7 @@ return {
   "stevearc/oil.nvim",
   dependencies = { { "echasnovski/mini.icons", opts = {} } },
   keys = {
-    { "<leader>-", "<cmd>Oil --float<cr>", desc = "File Explorer (float)" },
+    { "<leader>-", "<cmd>Oil --float<cr>", desc = "Oil (float)" },
   },
   opts = {
     columns = {
