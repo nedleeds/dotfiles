@@ -4,6 +4,7 @@ return {
     event = "VeryLazy",
     dependencies = {
       "nvim-tree/nvim-web-devicons",
+      "SmiteshP/nvim-navic",
     },
     config = function()
       local ok, lualine = pcall(require, "lualine")
@@ -71,17 +72,41 @@ return {
         if v ~= nil then table.insert(filtered_x, v) end
       end
 
+      -- filename > navic breadcrumb 컴포넌트
+      local navic_breadcrumb = {
+        function()
+          local filename = vim.fn.expand("%:t")
+          if filename == "" then filename = "[No Name]" end
+          local navic_ok, navic = pcall(require, "nvim-navic")
+          if navic_ok and navic.is_available() then
+            local data = navic.get_data()
+            if data and #data > 0 then
+              local parts = {}
+              for _, item in ipairs(data) do
+                local name = item.name:gsub("%(%d+ of %d+%): ", "")
+                table.insert(parts, item.icon .. name)
+              end
+              return filename .. " > " .. table.concat(parts, " > ")
+            end
+          end
+          return filename
+        end,
+        cond = function() return vim.bo.buftype == "" end,
+        color = { fg = colors.white },
+      }
+
       lualine.setup({
         options = {
           theme = bubbles_theme,
           component_separators = "",
-          section_separators = { left = "", right = "" },
-          -- globalstatus = true,
+          section_separators = { left = "", right = "" },
+          globalstatus = true,
+          refresh = { statusline = 100, tabline = 500 },
         },
         sections = {
           lualine_a = { { "mode", separator = { left = "" } } },
           lualine_b = { "branch", "diff", "diagnostics" },
-          lualine_c = { { "lsp_status", separator = { right = "", bg = "NONE" } } },
+          lualine_c = { navic_breadcrumb, { "lsp_status", separator = { right = "", bg = "NONE" } } },
           lualine_x = filtered_x,
           lualine_y = { "progress" },
           lualine_z = { { "location", separator = { right = "", bg = "NONE" } } },

@@ -49,5 +49,6 @@ return {
       vim.lsp.config(name, opts)
       vim.lsp.enable(name)
     end
+
   end,
 }

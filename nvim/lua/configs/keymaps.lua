@@ -27,11 +27,25 @@ map("n", "K", function()
   vim.lsp.buf.hover({ max_height = 25, max_width = 80, border = "rounded" })
 end, { desc = "Hover documentation" })
 map("n", "gd", function()
-  vim.lsp.buf.definition()
-  vim.api.nvim_create_autocmd("CursorMoved", {
-    once = true,
-    callback = function() vim.cmd("normal! zz") end,
-  })
+  -- buf_request 에 직접 콜백을 넘겨 "(1 of 1): ..." echo 를 우회
+  local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+  if not client then return end
+  local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+  vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, ctx)
+    if err or not result then return end
+    client = vim.lsp.get_client_by_id(ctx.client_id) or client
+    local locs = vim.islist(result) and result or { result }
+    if #locs == 0 then return end
+    vim.lsp.util.show_document(locs[1], client.offset_encoding, { reuse_win = false, focus = true })
+    vim.cmd("normal! zz")
+    if #locs > 1 then
+      vim.fn.setqflist({}, " ", {
+        title = "Definitions",
+        items = vim.lsp.util.locations_to_items(locs, client.offset_encoding),
+      })
+      vim.cmd("copen")
+    end
+  end)
 end, { desc = "Go to definition (centered)" })
 map("n", "gD", vim.lsp.buf.declaration,    { desc = "Go to declaration" })
 map("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
@@ -50,9 +64,18 @@ map("n", "[e", function() vim.diagnostic.jump({ count = -1, severity = vim.diagn
 
 -- Pickers (Snacks)
 map("n", "<leader>su", function() Snacks.picker.undo() end,   { desc = "Undo history" })
-map("n", "<leader>sz", function() Snacks.zen() end,           { desc = "Toggle zen mode" })
-map("n", "<leader>s.", function() Snacks.scratch() end,       { desc = "Toggle scratchpad" })
+map("n", "<leader>fs", function() Snacks.picker.lsp_symbols() end, { desc = "Find Symbols in Document" })
+map("n", "<leader>fS", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Find Symbols in Workspace"})
 
 -- Git (Snacks pickers)
 map("n", "<leader>gl", function() Snacks.picker.git_log() end,    { desc = "Git log" })
 map("n", "<leader>gs", function() Snacks.picker.git_status() end, { desc = "Git status" })
+
+-- Terminal splits
+map({ "n", "t" }, "<C-\\>", function()
+  Snacks.terminal.toggle(nil, { count = 1, win = { position = "right",  width  = 0.35, wo = { winbar = "" } } })
+end, { desc = "Terminal (right 35%)" })
+
+map({ "n", "t" }, "<C-_>", function()
+  Snacks.terminal.toggle(nil, { count = 2, win = { position = "bottom", height = 0.35, wo = { winbar = "" } } })
+end, { desc = "Terminal (bottom 35%)" })
