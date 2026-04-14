@@ -107,3 +107,6 @@ end
 map("n", "<leader>w0", function()
   windows.goto_win(10)
 end, { desc = "Go to window 10" })
+
+vim.keymap.set("n", "<leader>fs", function() Snacks.picker.lsp_symbols() end, { desc = "Document Symbols" })
+vim.keymap.set("n", "<leader>fS", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "Workspace Symbols" })
