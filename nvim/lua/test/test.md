@@ -128,6 +128,10 @@ def greet(names: List[str]) -> None:
         print(f"Hello, {name}!")
 ```
 
+### 주의
+
+해당 배치 파일은, nvim 0.13.0. dev 기준으로 테스트한 버전입니다.
+
 ### 💡 만약 특정 언어만 색이 안 나온다면?
 - 사외망인 경우
     1. **해당 파서 설치 여부 확인:** `:TSInstall <언어명>` (예: `:TSInstall zig`)

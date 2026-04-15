@@ -9,7 +9,9 @@ $ErrorActionPreference = "Stop"
 # =============================================
 $PARSERS = @(
     "yaml", "bash", "html", "python", "cpp",
-    "css", "javascript", "rust", "zig", "powershell"
+    "css", "javascript", "rust", "zig", "powershell",
+    "lua", "vim", "vimdoc", "query",
+    "json", "toml", "markdown", "markdown_inline"
 )
 
 # =============================================
@@ -78,20 +80,18 @@ Write-Step "parsers.lua 에서 parser 정보 파싱..."
 $parsersContent = Get-Content $PARSERS_LUA -Raw
 
 function Get-ParserInfo($lang) {
-    # url 추출
-    if ($parsersContent -match "(?s)$lang\s*=\s*\{.*?url\s*=\s*'([^']+)'") {
+    # url 추출 - 정확한 키 매칭
+    if ($parsersContent -match "(?s)\b$lang\s*=\s*\{.*?url\s*=\s*'([^']+)'") {
         $url = $Matches[1]
     } else {
         return $null
     }
-
     # revision 추출
-    if ($parsersContent -match "(?s)$lang\s*=\s*\{.*?revision\s*=\s*'([^']+)'") {
+    if ($parsersContent -match "(?s)\b$lang\s*=\s*\{.*?revision\s*=\s*'([^']+)'") {
         $revision = $Matches[1]
     } else {
         return $null
     }
-
     return @{ url = $url; revision = $revision }
 }
 
@@ -124,6 +124,10 @@ foreach ($lang in $PARSERS) {
     Write-Host "    Downloading..." -NoNewline
     try {
         & curl.exe --silent --ssl-no-revoke --fail -L $zipUrl --output $zipPath
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path $zipPath)) {
+            Write-Err "다운로드 실패: $zipUrl"
+            continue
+        }
         Write-Host " done" -ForegroundColor Green
     } catch {
         Write-Err "다운로드 실패: $zipUrl"
@@ -154,38 +158,56 @@ foreach ($lang in $PARSERS) {
         continue
     }
 
-    # src 폴더 확인
-    $srcDir = "$extractDir\src"
+    # src 폴더 확인 (markdown 은 서브 디렉토리 구조)
+    if ($lang -eq "markdown") {
+        $srcDir = "$extractDir\tree-sitter-markdown\src"
+    } elseif ($lang -eq "markdown_inline") {
+        $srcDir = "$extractDir\tree-sitter-markdown-inline\src"
+    } else {
+        $srcDir = "$extractDir\src"
+    }
     if (-not (Test-Path $srcDir)) {
         Write-Err "src 폴더를 찾을 수 없습니다: $srcDir"
         continue
     }
 
-    # .c 파일 수집
-    $cFiles = Get-ChildItem "$srcDir\*.c" | ForEach-Object { $_.FullName }
-    if ($cFiles.Count -eq 0) {
-        Write-Err ".c 파일을 찾을 수 없습니다"
+    # .c / .cc 파일 수집
+    $cFiles   = Get-ChildItem "$srcDir\*.c"  -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+    $cppFiles = Get-ChildItem "$srcDir\*.cc" -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+    if ($cFiles.Count -eq 0 -and $cppFiles.Count -eq 0) {
+        Write-Err ".c/.cc 파일을 찾을 수 없습니다"
         continue
     }
-
     # 컴파일
     Write-Host "    Compiling..." -NoNewline
-    $outputSo = "$extractDir\parser.so"
-    $compileArgs = @("-shared", "-o", $outputSo, "-O2", "-I", $srcDir) + $cFiles
-    $result = & clang @compileArgs 2>&1
+    $outputDll = "$extractDir\parser.dll"
+    $cObj   = @()
+    $cppObj = @()
+    foreach ($f in $cFiles) {
+        $obj = "$f.o"
+        Write-Host "obj path: $obj"
+        & clang -c -O2 -I $srcDir -D_CRT_SECURE_NO_WARNINGS -DTREE_SITTER_LANGUAGE_VERSION=15 $f -o $obj 2>&1
+        if ($LASTEXITCODE -ne 0) { Write-Err "컴파일 실패: $f"; continue }
+        $cObj += $obj
+    }
+    foreach ($f in $cppFiles) {
+        $obj = "$f.o"
+        & clang++ -c -O2 -I $srcDir -D_CRT_SECURE_NO_WARNINGS -DTREE_SITTER_LANGUAGE_VERSION=15 $f -o $obj 2>&1
+        if ($LASTEXITCODE -ne 0) { Write-Err "컴파일 실패: $f"; continue }
+        $cppObj += $obj
+    }
+    $allObjs = $cObj + $cppObj
+    & clang++ -shared -fuse-ld=lld -o $outputDll $allObjs 2>&1
     if ($LASTEXITCODE -ne 0) {
-        Write-Err "컴파일 실패:`n$result"
+        Write-Err "링크 실패"
         continue
     }
     Write-Host " done" -ForegroundColor Green
 
     # 복사
-    $dest = "$PARSER_DIR\$lang.so"
-    Copy-Item $outputSo $dest -Force
-    Write-Ok "$lang.so → $PARSER_DIR"
-
-    # 임시 파일 정리
-    Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+    $dest = "$PARSER_DIR\$lang.dll"
+    Copy-Item $outputDll $dest -Force
+    Write-Ok "$lang.dll → $PARSER_DIR"
 }
 
 # =============================================

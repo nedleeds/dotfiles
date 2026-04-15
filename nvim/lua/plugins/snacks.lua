@@ -17,6 +17,9 @@ return {
     },
     terminal = {
       enabled = true,
+      wo = {
+          winhighlight = "FloatBorder:SnacksTermBorder",
+      },
       win = {
         keys = {
           nav_h = { "<C-h>", function() vim.cmd("wincmd h") end, desc = "Go to left window",  mode = { "n", "t" } },

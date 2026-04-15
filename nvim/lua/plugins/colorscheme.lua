@@ -10,6 +10,7 @@ return {
     local hl = vim.api.nvim_set_hl
     hl(0, "LspFloatBorder", { fg = "#7aa2f7", bg = "NONE" })
     hl(0, "FloatBorder",    { link = "LspFloatBorder" })
+    hl(0, "SnacksTermBorder", { fg = "#30363d" })
 
     hl(0, "Normal",      { bg = "NONE" })
     hl(0, "NormalNC",    { bg = "NONE" })
@@ -27,7 +28,7 @@ return {
     hl(0, "StatusLineNC", { bg = "NONE" })
     hl(0, "MsgArea",      { bg = "NONE" })
     hl(0, "MsgSeparator", { bg = "NONE" })
-    hl(0, "WinSeparator", { bg = "NONE" })
+    hl(0, "WinSeparator", { fg = "#30363d" })
 
     hl(0, "CursorLine", { bg = "#0f1114" })
 

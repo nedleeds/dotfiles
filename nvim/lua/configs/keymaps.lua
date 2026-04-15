@@ -67,11 +67,10 @@ map("n", "<leader>gs", function() Snacks.picker.git_status() end, { desc = "Git 
 
 -- Terminal splits
 map({ "n", "t" }, "<C-\\>", function()
-  Snacks.terminal.toggle(nil, { count = 1, win = { position = "right",  width  = 0.35, wo = { winbar = "" } } })
+  Snacks.terminal.toggle("pwsh", { count = 1, win = { position = "right", width = 0.35, border = "rounded", wo = { winbar = "" } } })
 end, { desc = "Terminal (right 35%)" })
-
 map({ "n", "t" }, "<C-_>", function()
-  Snacks.terminal.toggle(nil, { count = 2, win = { position = "bottom", height = 0.35, wo = { winbar = "" } } })
+  Snacks.terminal.toggle("pwsh", { count = 2, win = { position = "bottom", height = 0.35, wo = { winbar = "", winhighlight = "FloatBorder:SnacksTermBorder" } } })
 end, { desc = "Terminal (bottom 35%)" })
 
 
