@@ -1,45 +1,19 @@
-return {
-  {
-    "folke/which-key.nvim",
-    version = "*",
-    event = "VeryLazy",
+vim.pack.add({ "https://github.com/folke/which-key.nvim" })
 
-    opts = {
-      preset = "helix",
-      delay = 50,
+local wk = require("which-key")
 
-      plugins = {
-        spelling = { enabled = true, suggestions = 20 },
-        presets = {
-          operators = false,
-          motions = false,
-          text_objects = false,
-          windows = true,
-          nav = true,
-          z = true,
-          g = true,
-        },
-      },
-
-      win = {
-          border = "rounded",
-      },
-
-      layout = {
-        spacing = 1,
-      },
-
-      icons = {
-        mappings = true,
-        breadcrumb = "»",
-        separator = "➜",
-        group = "+",
-        ellipsis = "…",
-      },
+wk.setup({
+    preset = "modern",
+    delay = 300,
+    win = {
+        border = "rounded",
     },
+})
 
-    config = function(_, opts)
-      require("config.which_key").setup(opts)
-    end,
-  },
-}
+-- 그룹 이름만 등록 (실제 키맵은 각 파일에서 vim.keymap.set으로)
+wk.add({
+    { "<leader>b", group = "버퍼" },
+    { "<leader>f", group = "찾기" },
+    { "<leader>c", group = "코드" },
+    { "<leader>r", group = "리팩토링" },
+})

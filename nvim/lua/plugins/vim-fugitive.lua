@@ -1,20 +1,7 @@
-return {
-  {
-    "tpope/vim-fugitive",
-    cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gread", "Gwrite", "Gclog", "Gbrowse" },
-    keys = {
-      { "<leader>g",  "", desc = "+Git" },
+-- lua/plugins/fugitive.lua
+vim.pack.add({ "https://github.com/tpope/vim-fugitive" })
 
-      { "<leader>gs", "<cmd>Git<cr>",        desc = "Status" },
-      { "<leader>gb", "<cmd>Git blame<cr>",  desc = "Blame" },
-      { "<leader>gd", "<cmd>Git diff<cr>",   desc = "Diff" },
-      { "<leader>gl", "<cmd>Git log<cr>",    desc = "Log" },
-      { "<leader>gc", "<cmd>Git commit<cr>", desc = "Commit" },
-      { "<leader>gp", "<cmd>Git push<cr>",   desc = "Push" },
-      { "<leader>gP", "<cmd>Git pull<cr>",   desc = "Pull" },
-
-      -- 편의: 현재 파일 diff (3-way 상황에서도 유용)
-      { "<leader>gf", "<cmd>Gvdiffsplit<cr>", desc = "File diff (vsplit)" },
-    },
-  },
-}
+vim.keymap.set("n", "gb", "<cmd>Git blame<cr>", { desc = "Git blame" })
+vim.keymap.set("n", "<leader>gs", "<cmd>Git<cr>",       { desc = "Git status" })
+vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<cr>", { desc = "Git diff split" })
+vim.keymap.set("n", "<leader>gl", "<cmd>vertical Git log --oneline --decorate<cr>", { desc = "Git log" })
