@@ -1,0 +1,68 @@
+onboarding = false
+
+# GitHub Dark palette shared with Neovim and tmux.
+[theme]
+name = "terminal"
+
+[theme.custom]
+panel_bg = "reset"
+sidebar_bg = "reset"
+active_row_bg = "#000000"
+selection_bg = "#1c2128"
+surface0 = "#0d1117"
+surface1 = "#10151b"
+surface_dim = "#0d1117"
+overlay0 = "#30363d"
+overlay1 = "#484f58"
+text = "#ffffff"
+subtext0 = "#484f58"
+accent = "#388bfd"
+blue = "#58a6ff"
+green = "#3fb950"
+yellow = "#d29922"
+red = "#f85149"
+mauve = "#a371f7"
+teal = "#39c5cf"
+peach = "#ffa657"
+
+# Full outside frame with shared splitters and no gaps.
+[ui]
+tab_bar_position = "top"
+pane_borders = "auto"
+pane_outer_borders = true
+pane_gaps = false
+status_indicators = "symbols"
+accent = "#388bfd"
+tab_bar_right = [{ type = "datetime", format = "%y.%m.%d" }, { type = "datetime", format = "%H:%M" }]
+tab_bar_right_separator = " │ "
+
+# Keep tab labels readable without the previous bright white.
+[ui.sidebar.agents]
+rows = [["state_icon", "machine", "workspace"], [{ token = "tab", fg = "#8b949e", dim = false }, { token = "agent", fg = "#a371f7", dim = false }]]
+
+# Match the shortcuts in ~/.tmux.conf where Herdr supports them.
+[keys]
+prefix = "ctrl+a"
+
+# Tmux: prefix + \\ / - (side-by-side / stacked).
+split_vertical = "prefix+backslash"
+split_horizontal = "prefix+minus"
+
+# Tmux-style direct Ctrl+h/j/k/l pane navigation.
+# Herdr allows one shortcut per action, so prefix+h/j/k/l is replaced.
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+j"
+focus_pane_up = "ctrl+k"
+focus_pane_right = "ctrl+l"
+
+# Tmux: Ctrl+Shift+h/j/k/l resize; Ctrl+Alt+h/l reorder windows.
+resize_pane_left = "ctrl+shift+h"
+resize_pane_down = "ctrl+shift+j"
+resize_pane_up = "ctrl+shift+k"
+resize_pane_right = "ctrl+shift+l"
+move_tab_previous = "ctrl+alt+h"
+move_tab_next = "ctrl+alt+l"
+
+# Tmux: prefix + r reloads the configuration.
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
